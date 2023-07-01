@@ -5,3 +5,5 @@ WallpaperChanger/.vs/WallpaperChanger/FileContentIndex/read.lock
 WallpaperChanger/.vs/WallpaperChanger/FileContentIndex/d566ca6b-0efd-4791-ace3-d0f03e2aab75.vsidx
 WallpaperChanger/.vs/WallpaperChanger/FileContentIndex/04161683-55c9-43c6-a52d-9d60458f690a.vsidx
 WallpaperChanger/.vs/WallpaperChanger/v17/ipch/AutoPCH/cc804c2c9c70800e/MAIN.ipch
+*.vsidx
+*.ipch
