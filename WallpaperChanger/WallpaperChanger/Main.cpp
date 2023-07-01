@@ -2,6 +2,7 @@
 #include <chrono>
 #include <string>
 #include <direct.h>
+#include <fstream>
 
 
 #pragma warning(disable : 4996)
@@ -9,7 +10,7 @@
 const char* days[7] = { "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday" };
 
 
-const std::string GetCurrentTime()
+const std::string GetCurrentDay()
 {
     const auto now = std::chrono::system_clock::now();
     const std::time_t t_c = std::chrono::system_clock::to_time_t(now);
@@ -52,24 +53,34 @@ void initFiles()
     for (unsigned int i = 0; i < 7; i++)
     {
         std::string dateDir = buffer + days[i];
-        std::cout << dateDir.c_str() << std::endl;
         if (mkdir(dateDir.c_str()) == -1)
         {
             std::cout << "Error with initialising Day Directories" << std::endl;
             std::cin.get();
         }
     }
-
-
-    
-
 }
 
 int main()
 {
-    initFiles();
+    std::ifstream file;
+    file.open("Initialised.txt");
+    if (!file.is_open())
+    {
+        std::cout << "Initialising..." << std::endl;
+        file.close();
+        std::ofstream file("Initialised.txt");
+        file << "1";
+        file.close();
+        initFiles();
+    }
+    
 
-    std::string date = GetCurrentTime();
+
+
+
+
+    std::string date = GetCurrentDay();
     std::cout << date << std::endl;
 
     

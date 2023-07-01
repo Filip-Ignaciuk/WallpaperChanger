@@ -7,3 +7,6 @@ WallpaperChanger/.vs/WallpaperChanger/FileContentIndex/04161683-55c9-43c6-a52d-9
 WallpaperChanger/.vs/WallpaperChanger/v17/ipch/AutoPCH/cc804c2c9c70800e/MAIN.ipch
 *.vsidx
 *.ipch
+*.db-shm
+WallpaperChanger/WallpaperChanger/Initialised.txt
+WallpaperChanger/x64/Debug/Initialised.txt
