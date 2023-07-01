@@ -3,13 +3,14 @@
 #include <string>
 #include <direct.h>
 #include <fstream>
+#include <Windows.h>
 
 
 #pragma warning(disable : 4996)
 
 const char* days[7] = { "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday" };
 
-
+// Gives you the current day
 const std::string GetCurrentDay()
 {
     const auto now = std::chrono::system_clock::now();
@@ -18,7 +19,7 @@ const std::string GetCurrentDay()
     return fullDate.substr(0, 3);
 }
 
-
+// Obtain the current directory the exe is located in.
 std::string GetCurrentDir()
 {
     char buffer[FILENAME_MAX];
@@ -63,6 +64,7 @@ void initFiles()
 
 int main()
 {
+    // Checking/Initialising files
     std::ifstream file;
     file.open("Initialised.txt");
     if (!file.is_open())
@@ -75,13 +77,31 @@ int main()
         initFiles();
     }
     
+    // Accessing registry so that we know what the current wallpaper is.
+    //WallPaper
+    HKEY hKey;
+    LONG lRes = RegOpenKeyExW(HKEY_CURRENT_USER, L"Control Panel\\Desktop", 0, KEY_READ, &hKey);
+    
+    // Just to convert std::string to std::wstring.
+    std::string RegName = "WallPaper";
+    int size_needed = MultiByteToWideChar(CP_UTF8, 0, &RegName[0], (int)RegName.size(), NULL, 0);
+    std::wstring wstrTo(size_needed, 0);
+    MultiByteToWideChar(CP_UTF8, 0, &RegName[0], (int)RegName.size(), &wstrTo[0], size_needed);
 
 
+    WCHAR buffer[512];
+    DWORD sizeOfBuffer = sizeof(buffer);
+    ULONG error = RegQueryValueExW(hKey, wstrTo.c_str(), 0, NULL, (LPBYTE)buffer, &sizeOfBuffer);
 
-
-
-    std::string date = GetCurrentDay();
-    std::cout << date << std::endl;
+    if (error == ERROR_SUCCESS)
+    {
+        std::wstring dir = buffer;
+        std::cout << dir.c_str() << std::endl;
+    }
+    else
+    {
+        std::cout << "Failed retrieving the current wallpaper." << std::endl;
+    }
 
     
     
@@ -91,3 +111,8 @@ int main()
     std::cin.get();
     
 }
+
+
+
+
+

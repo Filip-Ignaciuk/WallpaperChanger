@@ -10,3 +10,14 @@ WallpaperChanger/.vs/WallpaperChanger/v17/ipch/AutoPCH/cc804c2c9c70800e/MAIN.ipc
 *.db-shm
 WallpaperChanger/WallpaperChanger/Initialised.txt
 WallpaperChanger/x64/Debug/Initialised.txt
+*.tlog
+*.recipe
+*.iobj
+*.ipdb
+*.pdb
+*.log
+*.txt
+*.idb
+*.ilk
+*.obj
+*.suo
