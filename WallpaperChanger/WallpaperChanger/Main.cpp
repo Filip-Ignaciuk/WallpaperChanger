@@ -76,6 +76,8 @@ int main()
         file.close();
         initFiles();
     }
+
+
     
     // Accessing registry so that we know what the current wallpaper is.
     //WallPaper
@@ -93,19 +95,37 @@ int main()
     DWORD sizeOfBuffer = sizeof(buffer);
     ULONG error = RegQueryValueExW(hKey, wstrTo.c_str(), 0, NULL, (LPBYTE)buffer, &sizeOfBuffer);
 
+
+    std::wstring dir;
     if (error == ERROR_SUCCESS)
     {
-        std::wstring dir = buffer;
+        dir = buffer;
         std::cout << dir.c_str() << std::endl;
     }
     else
     {
         std::cout << "Failed retrieving the current wallpaper." << std::endl;
     }
+    //C:\Users\Ignac\AppData\Local\Packages\Microsoft.Windows.Photos_8wekyb3d8bbwe\LocalState\PhotosAppBackground\Portal Wallpaper Dual Monitors 20 Amazing Dual Screen Moni.jpg
+    // Location of the start of the image name.
+    int j = 4;
+    for (unsigned int i = 0; i < dir.length(); i++)
+    {
+        if (dir[i] == 'u' && dir[i + 1] == 'n' && dir[i + 2] == 'd' && dir[i + 3] == '\\')
+        {
+            j = j + i;
+        }
+    }
 
-    
-    
-    
+    // Gives current image name with extension.
+    std::string nameOfCurrentImage;
+
+    for (unsigned int i = j; i < dir.length(); i++)
+    {
+        nameOfCurrentImage[i] = dir[i];
+    }
+
+
 
 
     std::cin.get();
