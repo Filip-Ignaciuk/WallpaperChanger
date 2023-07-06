@@ -96,11 +96,11 @@ int main()
     ULONG error = RegQueryValueExW(hKey, wstrTo.c_str(), 0, NULL, (LPBYTE)buffer, &sizeOfBuffer);
 
 
-    std::wstring dir;
+    std::wstring dirw;
     if (error == ERROR_SUCCESS)
     {
-        dir = buffer;
-        std::cout << dir.c_str() << std::endl;
+        dirw = buffer;
+        std::cout << dirw.c_str() << std::endl;
     }
     else
     {
@@ -109,24 +109,27 @@ int main()
     //C:\Users\Ignac\AppData\Local\Packages\Microsoft.Windows.Photos_8wekyb3d8bbwe\LocalState\PhotosAppBackground\Portal Wallpaper Dual Monitors 20 Amazing Dual Screen Moni.jpg
     // Location of the start of the image name.
     int j = 4;
-    for (unsigned int i = 0; i < dir.length(); i++)
+    for (unsigned int i = 0; i < dirw.length(); i++)
     {
-        if (dir[i] == 'u' && dir[i + 1] == 'n' && dir[i + 2] == 'd' && dir[i + 3] == '\\')
+        if (dirw[i] == 'u' && dirw[i + 1] == 'n' && dirw[i + 2] == 'd' && dirw[i + 3] == '\\')
         {
             j = j + i;
         }
     }
 
-    // Gives current image name with extension.
-    std::string nameOfCurrentImage;
-
-    for (unsigned int i = j; i < dir.length(); i++)
+    // Conversion of the dir from wstring to string.
+    std::string dir;
+    for (unsigned int i = 0; i < dirw.size(); i++)
     {
-        nameOfCurrentImage[i] = dir[i];
+        dir.push_back((char)dirw[i]);
     }
 
-
-
+    std::string nameOfCurrentImage;
+    for (j; j < dir.size(); j++)
+    {
+        nameOfCurrentImage.push_back(dir[j]);
+    }
+    std::cout << nameOfCurrentImage << std::endl;
 
     std::cin.get();
     
