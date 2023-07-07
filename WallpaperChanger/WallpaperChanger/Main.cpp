@@ -4,11 +4,25 @@
 #include <direct.h>
 #include <fstream>
 #include <Windows.h>
+#include <filesystem>
 
 
 #pragma warning(disable : 4996)
 
 const char* days[7] = { "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday" };
+
+// Conversion of Wstrings to strings
+std::string ConvertWStrToStr(std::wstring wStr)
+{
+    std::string normString;
+    for (unsigned int i = 0; i < wStr.size(); i++)
+    {
+        normString.push_back(wStr[i]);
+    }
+    return normString;
+}
+
+
 
 // Gives you the current day
 const std::string GetCurrentDay()
@@ -19,18 +33,13 @@ const std::string GetCurrentDay()
     return fullDate.substr(0, 3);
 }
 
-// Obtain the current directory the exe is located in.
-std::string GetCurrentDir()
-{
-    char buffer[FILENAME_MAX];
-    (void)_getcwd(buffer, FILENAME_MAX);
-    return buffer;
-}
 
 // Initialising files if they havent been created.
 void initFiles()
 {
-    std::string currentDir = GetCurrentDir();
+    auto currentDirPath = std::filesystem::current_path();
+    std::wstring currentDirWStr = currentDirPath.c_str();
+    std::string currentDir = ConvertWStrToStr(currentDirWStr);
 
     for (unsigned int i = 0; i < currentDir.size(); i++)
     {
@@ -100,7 +109,6 @@ int main()
     if (error == ERROR_SUCCESS)
     {
         dirw = buffer;
-        std::cout << dirw.c_str() << std::endl;
     }
     else
     {
@@ -117,12 +125,8 @@ int main()
         }
     }
 
-    // Conversion of the dir from wstring to string.
-    std::string dir;
-    for (unsigned int i = 0; i < dirw.size(); i++)
-    {
-        dir.push_back((char)dirw[i]);
-    }
+    std::string dir = ConvertWStrToStr(dirw);
+
 
     std::string nameOfCurrentImage;
     for (j; j < dir.size(); j++)
@@ -130,6 +134,7 @@ int main()
         nameOfCurrentImage.push_back(dir[j]);
     }
     std::cout << nameOfCurrentImage << std::endl;
+
 
     std::cin.get();
     
