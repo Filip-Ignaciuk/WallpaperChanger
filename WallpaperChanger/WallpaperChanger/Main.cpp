@@ -1,18 +1,16 @@
 #include <iostream>
 #include <chrono>
 #include <string>
-#include <direct.h>
+
 #include <fstream>
 #include <Windows.h>
 #include <filesystem>
 
-
 #pragma warning(disable : 4996)
 
-const char* days[7] = { "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday" };
 
 // Conversion of Wstrings to strings
-std::string ConvertWStrToStr(std::wstring wStr)
+std::string ConvertWStrToStr(const std::wstring& wStr)
 {
     std::string normString;
     for (unsigned int i = 0; i < wStr.size(); i++)
@@ -20,8 +18,24 @@ std::string ConvertWStrToStr(std::wstring wStr)
         normString.push_back(wStr[i]);
     }
     return normString;
+
+    // Offical way
+    //std::wstring_convert<std::codecvt_utf8_utf16<char16_t>, char16_t> convert;
+    //std::string dest = convert.to_bytes(source);
 }
 
+// Converting all the \\ shlashes into one singular forward slash.
+std::string NormaliseDir(std::string& str)
+{
+    for (unsigned int i = 0; i < str.size(); i++)
+    {
+        if (str[i] == '\\')
+        {
+            str[i] = '/';
+        }
+    }
+    return str;
+}
 
 
 // Gives you the current day
@@ -34,45 +48,58 @@ const std::string GetCurrentDay()
 }
 
 
+
+
+const char* days[7] = { "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday" };
+static std::filesystem::path currentDirPath = std::filesystem::current_path();
+static std::string* currentDir = &(ConvertWStrToStr(currentDirPath.c_str()));;
+static std::string* currentDirNormalised = &(*currentDir);
+std::string imageDir = (*currentDirNormalised) + (std::string)"/Images";
+
+
+
+
 // Initialising files if they havent been created.
 void initFiles()
 {
-    auto currentDirPath = std::filesystem::current_path();
-    std::wstring currentDirWStr = currentDirPath.c_str();
-    std::string currentDir = ConvertWStrToStr(currentDirWStr);
 
-    for (unsigned int i = 0; i < currentDir.size(); i++)
-    {
-        if (currentDir[i] == '\\')
-        {
-            currentDir[i] = '/';
-        }
-    }
 
-    std::string imageDir = currentDir + (std::string)"/Images";
-    if (mkdir(imageDir.c_str()) == -1)
+    if (std::filesystem::create_directory(imageDir.c_str()) == 0)
     {
         std::cout << "Error With initialising Image Directory" << std::endl;
         std::cin.get();
     }
+
     std::string buffer;
     buffer = imageDir.c_str();
     buffer = buffer + '/';
     std::cout << buffer << std::endl;
 
-    for (unsigned int i = 0; i < 7; i++)
-    {
-        std::string dateDir = buffer + days[i];
-        if (mkdir(dateDir.c_str()) == -1)
-        {
-            std::cout << "Error with initialising Day Directories" << std::endl;
-            std::cin.get();
-        }
-    }
+    //for (unsigned int i = 0; i < 7; i++)
+    //{
+    //    std::string dateDir = buffer + days[i];
+    //    if (mkdir(dateDir.c_str()) == -1)
+    //    {
+    //        std::cout << "Error with initialising Day Directories" << std::endl;
+    //        std::cin.get();
+    //    }
+    //}
 }
+
+
+
+
+
+
+
+
 
 int main()
 {
+    // Initialising 
+    *currentDirNormalised = NormaliseDir(*currentDirNormalised);
+    
+
     // Checking/Initialising files
     std::ifstream file;
     file.open("Initialised.txt");
@@ -129,12 +156,23 @@ int main()
 
 
     std::string nameOfCurrentImage;
-    for (j; j < dir.size(); j++)
+    for (unsigned j; j < dir.size(); j++)
     {
         nameOfCurrentImage.push_back(dir[j]);
     }
+
     std::cout << nameOfCurrentImage << std::endl;
 
+    for (unsigned int i = 0; i < 7; i++)
+    {
+        for (const auto& entry : std::filesystem::directory_iterator(imageDir + (std::string)"/Images"))
+        {
+            std::cout << entry.path() << std::endl;
+        }
+            
+    }
+
+    
 
     std::cin.get();
     
