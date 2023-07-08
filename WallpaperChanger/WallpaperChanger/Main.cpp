@@ -52,9 +52,10 @@ const std::string GetCurrentDay()
 
 const char* days[7] = { "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday" };
 static std::filesystem::path currentDirPath = std::filesystem::current_path();
-static std::string* currentDir = &(ConvertWStrToStr(currentDirPath.c_str()));;
-static std::string* currentDirNormalised = &(*currentDir);
-std::string imageDir = (*currentDirNormalised) + (std::string)"/Images";
+static std::string currentDir = ConvertWStrToStr(currentDirPath.c_str());;
+static std::string currentDirNormalised = currentDir;
+std::string imageDir = currentDirNormalised + (std::string)"/Images";
+
 
 
 
@@ -97,7 +98,7 @@ void initFiles()
 int main()
 {
     // Initialising 
-    *currentDirNormalised = NormaliseDir(*currentDirNormalised);
+    currentDirNormalised = NormaliseDir(currentDirNormalised);
     
 
     // Checking/Initialising files
@@ -143,7 +144,8 @@ int main()
     }
     //C:\Users\Ignac\AppData\Local\Packages\Microsoft.Windows.Photos_8wekyb3d8bbwe\LocalState\PhotosAppBackground\Portal Wallpaper Dual Monitors 20 Amazing Dual Screen Moni.jpg
     // Location of the start of the image name.
-    int j = 4;
+    unsigned int j = 4;
+
     for (unsigned int i = 0; i < dirw.length(); i++)
     {
         if (dirw[i] == 'u' && dirw[i + 1] == 'n' && dirw[i + 2] == 'd' && dirw[i + 3] == '\\')
@@ -156,16 +158,20 @@ int main()
 
 
     std::string nameOfCurrentImage;
-    for (unsigned j; j < dir.size(); j++)
+    for (j; j < dir.size(); j++)
     {
         nameOfCurrentImage.push_back(dir[j]);
     }
 
     std::cout << nameOfCurrentImage << std::endl;
 
+    const std::string imageDirPath = NormaliseDir(currentDir) + "/Images";
+
+    std::cout << imageDirPath << std::endl;
+
     for (unsigned int i = 0; i < 7; i++)
     {
-        for (const auto& entry : std::filesystem::directory_iterator(imageDir + (std::string)"/Images"))
+        for (const auto& entry : std::filesystem::directory_iterator(imageDirPath))
         {
             std::cout << entry.path() << std::endl;
         }
