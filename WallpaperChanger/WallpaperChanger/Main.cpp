@@ -6,6 +6,8 @@
 #include <Windows.h>
 #include <filesystem>
 
+#include <shlobj.h>
+
 #pragma warning(disable : 4996)
 
 
@@ -24,6 +26,16 @@ std::string ConvertWStrToStr(const std::wstring& wStr)
     //std::string dest = convert.to_bytes(source);
 }
 
+std::wstring ConvertStrToWStr(const std::string& str)
+{
+    std::wstring wString;
+    for (unsigned int i = 0; i < str.length(); i++)
+    {
+        wString.push_back(str[i]);
+    }
+    return wString;
+}
+
 // Converting all the \\ shlashes into one singular forward slash.
 std::string NormaliseDir(std::string& str)
 {
@@ -36,6 +48,44 @@ std::string NormaliseDir(std::string& str)
     }
     return str;
 }
+
+std::wstring NormaliseDir(std::wstring& str)
+{
+    for (unsigned int i = 0; i < str.size(); i++)
+    {
+        if (str[i] == '\\')
+        {
+            str[i] = '/';
+        }
+    }
+    return str;
+}
+
+std::string UnNormaliseDir(std::string& str)
+{
+    for (unsigned int i = 0; i < str.size(); i++)
+    {
+        if (str[i] == '/')
+        {
+            str[i] = '\\';
+        }
+    }
+    return str;
+}
+
+std::wstring UnNormaliseDir(std::wstring& str)
+{
+    for (unsigned int i = 0; i < str.size(); i++)
+    {
+        if (str[i] == '/')
+        {
+            str[i] = '\\';
+        }
+    }
+    return str;
+}
+
+
 
 const char* daysLong[7] = { "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday" };
 const char* daysShort[7] = { "Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun" };
@@ -56,27 +106,27 @@ const std::string GetCurrentDay()
     }
     else if (shortDate == daysShort[1])
     {
-        return daysLong[0];
+        return daysLong[1];
     }
     else if (shortDate == daysShort[2])
     {
-        return daysLong[0];
+        return daysLong[2];
     }
     else if (shortDate == daysShort[3])
     {
-        return daysLong[0];
+        return daysLong[3];
     }
     else if (shortDate == daysShort[4])
     {
-        return daysLong[0];
+        return daysLong[4];
     }
     else if (shortDate == daysShort[5])
     {
-        return daysLong[0];
+        return daysLong[5];
     }
     else if (shortDate == daysShort[5])
     {
-        return daysLong[0];
+        return daysLong[6];
     }
 }
 
@@ -114,7 +164,6 @@ void initFiles()
         }
     }
 }
-
 
 
 
@@ -199,19 +248,19 @@ int main()
 
 
     std::vector<std::string> monImages;
-    std::vector<std::filesystem::path> monImagesDir;
+    std::vector<std::wstring> monImagesDir;
     std::vector<std::string> tueImages;
-    std::vector<std::filesystem::path> tueImagesDir;
+    std::vector<std::wstring> tueImagesDir;
     std::vector<std::string> wedImages;
-    std::vector<std::filesystem::path> wedImagesDir;
+    std::vector<std::wstring> wedImagesDir;
     std::vector<std::string> thuImages;
-    std::vector<std::filesystem::path> thuImagesDir;
+    std::vector<std::wstring> thuImagesDir;
     std::vector<std::string> friImages;
-    std::vector<std::filesystem::path> friImagesDir;
+    std::vector<std::wstring> friImagesDir;
     std::vector<std::string> satImages;
-    std::vector<std::filesystem::path> satImagesDir;
+    std::vector<std::wstring> satImagesDir;
     std::vector<std::string> sunImages;
-    std::vector<std::filesystem::path> sunImagesDir;
+    std::vector<std::wstring> sunImagesDir;
 
     for (unsigned int i = 0; i < 7; i++)
     {
@@ -251,8 +300,10 @@ int main()
 
                 std::reverse(nameOfImage.begin(), nameOfImage.end());
                 monImages.emplace_back(nameOfImage);
-
-                monImagesDir.emplace_back(entry.path());
+                
+                std::wstring tempWString = entry.path().c_str();
+                tempWString = UnNormaliseDir(tempWString);
+                monImagesDir.emplace_back(tempWString);
 
             }
             else if (nameOfImageWithDate[0] == 'T' && nameOfImageWithDate[1] == 'u' && nameOfImageWithDate[2] == 'e')
@@ -271,7 +322,9 @@ int main()
                 std::reverse(nameOfImage.begin(), nameOfImage.end());
                 tueImages.emplace_back(nameOfImage);
 
-                tueImagesDir.emplace_back(entry.path());
+                std::wstring tempWString = entry.path().c_str();
+                tempWString = UnNormaliseDir(tempWString);
+                tueImagesDir.emplace_back(tempWString);
             }
             else if (nameOfImageWithDate[0] == 'W' && nameOfImageWithDate[1] == 'e' && nameOfImageWithDate[2] == 'd')
             {
@@ -289,7 +342,9 @@ int main()
                 std::reverse(nameOfImage.begin(), nameOfImage.end());
                 wedImages.emplace_back(nameOfImage);
 
-                wedImagesDir.emplace_back(entry.path());
+                std::wstring tempWString = entry.path().c_str();
+                tempWString = UnNormaliseDir(tempWString);
+                wedImagesDir.emplace_back(tempWString);
             }
             else if (nameOfImageWithDate[0] == 'T' && nameOfImageWithDate[1] == 'h' && nameOfImageWithDate[2] == 'u')
             {
@@ -307,7 +362,9 @@ int main()
                 std::reverse(nameOfImage.begin(), nameOfImage.end());
                 thuImages.emplace_back(nameOfImage);
 
-                thuImagesDir.emplace_back(entry.path());
+                std::wstring tempWString = entry.path().c_str();
+                tempWString = UnNormaliseDir(tempWString);
+                thuImagesDir.emplace_back(tempWString);
             }
             else if (nameOfImageWithDate[0] == 'F' && nameOfImageWithDate[1] == 'r' && nameOfImageWithDate[2] == 'i')
             {
@@ -325,7 +382,9 @@ int main()
                 std::reverse(nameOfImage.begin(), nameOfImage.end());
                 friImages.emplace_back(nameOfImage);
 
-                friImagesDir.emplace_back(entry.path());
+                std::wstring tempWString = entry.path().c_str();
+                tempWString = UnNormaliseDir(tempWString);
+                friImagesDir.emplace_back(tempWString);
             }
             else if (nameOfImageWithDate[0] == 'S' && nameOfImageWithDate[1] == 'a' && nameOfImageWithDate[2] == 't')
             {
@@ -343,7 +402,9 @@ int main()
                 std::reverse(nameOfImage.begin(), nameOfImage.end());
                 satImages.emplace_back(nameOfImage);
 
-                satImagesDir.emplace_back(entry.path());
+                std::wstring tempWString = entry.path().c_str();
+                tempWString = UnNormaliseDir(tempWString);
+                satImagesDir.emplace_back(tempWString);
             }
             else if (nameOfImageWithDate[0] == 'S' && nameOfImageWithDate[1] == 'u' && nameOfImageWithDate[2] == 'n')
             {
@@ -361,7 +422,9 @@ int main()
                 std::reverse(nameOfImage.begin(), nameOfImage.end());
                 sunImages.emplace_back(nameOfImage);
 
-                sunImagesDir.emplace_back(entry.path());
+                std::wstring tempWString = entry.path().c_str();
+                tempWString = UnNormaliseDir(tempWString);
+                sunImagesDir.emplace_back(tempWString);
             }
 
 
@@ -385,7 +448,7 @@ int main()
     {
         for (unsigned int i = 0; i < tueImages.size(); i++)
         {
-            if (monImages[i] == nameOfCurrentImage)
+            if (tueImages[i] == nameOfCurrentImage)
             {
                 isCorrect = true;
             }
@@ -395,7 +458,7 @@ int main()
     {
         for (unsigned int i = 0; i < wedImages.size(); i++)
         {
-            if (monImages[i] == nameOfCurrentImage)
+            if (wedImages[i] == nameOfCurrentImage)
             {
                 isCorrect = true;
             }
@@ -405,7 +468,7 @@ int main()
     {
         for (unsigned int i = 0; i < thuImages.size(); i++)
         {
-            if (monImages[i] == nameOfCurrentImage)
+            if (thuImages[i] == nameOfCurrentImage)
             {
                 isCorrect = true;
             }
@@ -415,7 +478,7 @@ int main()
     {
         for (unsigned int i = 0; i < friImages.size(); i++)
         {
-            if (monImages[i] == nameOfCurrentImage)
+            if (friImages[i] == nameOfCurrentImage)
             {
                 isCorrect = true;
             }
@@ -425,7 +488,7 @@ int main()
     {
         for (unsigned int i = 0; i < satImages.size(); i++)
         {
-            if (monImages[i] == nameOfCurrentImage)
+            if (satImages[i] == nameOfCurrentImage)
             {
                 isCorrect = true;
             }
@@ -435,19 +498,80 @@ int main()
     {
         for (unsigned int i = 0; i < sunImages.size(); i++)
         {
-            if (monImages[i] == nameOfCurrentImage)
+            if (sunImages[i] == nameOfCurrentImage)
             {
                 isCorrect = true;
             }
         }
     }
 
-
-    //if (!isCorrect)
-    //{
-    //    LPWSTR image =
-    //        SystemParametersInfo(SPI_SETDESKWALLPAPER, 0, test, SPIF_UPDATEINIFILE)
-    //}
+    if (!isCorrect)
+    {
+        if (currentDay == daysLong[0])
+        {
+            int value = rand() % monImagesDir.size();
+            auto image = monImagesDir[value].c_str();
+            if (!SystemParametersInfo(SPI_SETDESKWALLPAPER, 0, (void*)image, SPIF_SENDCHANGE))
+            {
+                std::cout << "Error" << std::endl;
+            }
+        }
+        else if(currentDay == daysLong[1])
+        {
+            int value = rand() % tueImagesDir.size();
+            auto image = tueImagesDir[value].c_str();
+            if (!SystemParametersInfo(SPI_SETDESKWALLPAPER, 0, (void*)image, SPIF_SENDCHANGE))
+            {
+                std::cout << "Error" << std::endl;
+            }
+        }
+        else if (currentDay == daysLong[2])
+        {
+            int value = rand() % wedImagesDir.size();
+            auto image = wedImagesDir[value].c_str();
+            if (!SystemParametersInfo(SPI_SETDESKWALLPAPER, 0, (void*)image, SPIF_SENDCHANGE))
+            {
+                std::cout << "Error" << std::endl;
+            }
+        }
+        else if (currentDay == daysLong[3])
+        {
+            int value = rand() % thuImagesDir.size();
+            auto image = thuImagesDir[value].c_str();
+            if (!SystemParametersInfo(SPI_SETDESKWALLPAPER, 0, (void*)image, SPIF_SENDCHANGE))
+            {
+                std::cout << "Error" << std::endl;
+            }
+        }
+        else if (currentDay == daysLong[4])
+        {
+            int value = rand() % friImagesDir.size();
+            auto image = friImagesDir[value].c_str();
+            if (!SystemParametersInfo(SPI_SETDESKWALLPAPER, 0, (void*)image, SPIF_SENDCHANGE))
+            {
+                std::cout << "Error" << std::endl;
+            }
+        }
+        else if (currentDay == daysLong[5])
+        {
+            int value = rand() % satImagesDir.size();
+            auto image = satImagesDir[value].c_str();
+            if (!SystemParametersInfo(SPI_SETDESKWALLPAPER, 0, (void*)image, SPIF_SENDCHANGE))
+            {
+                std::cout << "Error" << std::endl;
+            }
+        }
+        else if (currentDay == daysLong[6])
+        {
+            int value = rand() % sunImagesDir.size();
+            auto image = sunImagesDir[value].c_str();
+            if (!SystemParametersInfo(SPI_SETDESKWALLPAPER, 0, (void*)image, SPIF_SENDCHANGE))
+            {
+                std::cout << "Error" << std::endl;
+            }
+        }
+        
+    }
     
 
     std::cin.get();
