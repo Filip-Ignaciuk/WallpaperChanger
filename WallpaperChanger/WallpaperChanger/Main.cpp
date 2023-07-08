@@ -53,8 +53,8 @@ const std::string GetCurrentDay()
 const char* days[7] = { "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday" };
 static std::filesystem::path currentDirPath = std::filesystem::current_path();
 static std::string currentDir = ConvertWStrToStr(currentDirPath.c_str());;
-static std::string currentDirNormalised = currentDir;
-std::string imageDir = currentDirNormalised + (std::string)"/Images";
+static std::string currentDirNormalised = NormaliseDir(currentDir);
+std::string imageDirNormalised = currentDirNormalised + (std::string)"/Images";
 
 
 
@@ -65,26 +65,22 @@ void initFiles()
 {
 
 
-    if (std::filesystem::create_directory(imageDir.c_str()) == 0)
+    if (std::filesystem::create_directory(imageDirNormalised.c_str()) == 0)
     {
         std::cout << "Error With initialising Image Directory" << std::endl;
         std::cin.get();
     }
 
-    std::string buffer;
-    buffer = imageDir.c_str();
-    buffer = buffer + '/';
-    std::cout << buffer << std::endl;
 
-    //for (unsigned int i = 0; i < 7; i++)
-    //{
-    //    std::string dateDir = buffer + days[i];
-    //    if (mkdir(dateDir.c_str()) == -1)
-    //    {
-    //        std::cout << "Error with initialising Day Directories" << std::endl;
-    //        std::cin.get();
-    //    }
-    //}
+    for (unsigned int i = 0; i < 7; i++)
+    {
+        std::string dateDir = imageDirNormalised + "/" + days[i];
+        if (std::filesystem::create_directory(dateDir) == false)
+        {
+            std::cout << "Error with initialising Day Directories" << std::endl;
+            std::cin.get();
+        }
+    }
 }
 
 
@@ -165,15 +161,16 @@ int main()
 
     std::cout << nameOfCurrentImage << std::endl;
 
-    const std::string imageDirPath = NormaliseDir(currentDir) + "/Images";
+    std::cout << imageDirNormalised << std::endl;
 
-    std::cout << imageDirPath << std::endl;
+    std::string imageDaysDirNormalised;
 
     for (unsigned int i = 0; i < 7; i++)
     {
-        for (const auto& entry : std::filesystem::directory_iterator(imageDirPath))
+        imageDaysDirNormalised = imageDirNormalised + "/" + days[i];
+        for (const auto& entry : std::filesystem::directory_iterator(imageDaysDirNormalised))
         {
-            std::cout << entry.path() << std::endl;
+            std::cout << entry.path().c_str() << std::endl;
         }
             
     }
