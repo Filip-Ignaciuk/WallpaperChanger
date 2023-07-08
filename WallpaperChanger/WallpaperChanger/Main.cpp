@@ -1,7 +1,7 @@
 #include <iostream>
 #include <chrono>
 #include <string>
-
+#include <map>
 #include <fstream>
 #include <Windows.h>
 #include <filesystem>
@@ -44,18 +44,47 @@ const std::string GetCurrentDay()
     const auto now = std::chrono::system_clock::now();
     const std::time_t t_c = std::chrono::system_clock::to_time_t(now);
     const std::string fullDate = std::ctime(&t_c);
-    return fullDate.substr(0, 3);
+    std::string shortDate = fullDate.substr(0, 3);
+    if (shortDate == daysShort[0])
+    {
+        return daysLong[0];
+    }
+    else if (shortDate == daysShort[1])
+    {
+        return daysLong[0];
+    }
+    else if (shortDate == daysShort[2])
+    {
+        return daysLong[0];
+    }
+    else if (shortDate == daysShort[3])
+    {
+        return daysLong[0];
+    }
+    else if (shortDate == daysShort[4])
+    {
+        return daysLong[0];
+    }
+    else if (shortDate == daysShort[5])
+    {
+        return daysLong[0];
+    }
+    else if (shortDate == daysShort[5])
+    {
+        return daysLong[0];
+    }
 }
 
 
 
 
-const char* days[7] = { "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday" };
+const char* daysLong[7] = { "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday" };
+const char* daysShort[7] = { "Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun" };
 static std::filesystem::path currentDirPath = std::filesystem::current_path();
 static std::string currentDir = ConvertWStrToStr(currentDirPath.c_str());;
 static std::string currentDirNormalised = NormaliseDir(currentDir);
 std::string imageDirNormalised = currentDirNormalised + (std::string)"/Images";
-
+const std::string currentDay = GetCurrentDay();
 
 
 
@@ -74,7 +103,7 @@ void initFiles()
 
     for (unsigned int i = 0; i < 7; i++)
     {
-        std::string dateDir = imageDirNormalised + "/" + days[i];
+        std::string dateDir = imageDirNormalised + "/" + daysLong[i];
         if (std::filesystem::create_directory(dateDir) == false)
         {
             std::cout << "Error with initialising Day Directories" << std::endl;
@@ -82,6 +111,9 @@ void initFiles()
         }
     }
 }
+
+
+
 
 
 
@@ -165,14 +197,81 @@ int main()
 
     std::string imageDaysDirNormalised;
 
+    std::cout << currentDay << std::endl;
+
+    std::map<std::string, std::string> monImages;
+    std::map<std::string, std::string> tueImages;
+    std::map<std::string, std::string> wedImages;
+    std::map<std::string, std::string> thuImages;
+    std::map<std::string, std::string> friImages;
+    std::map<std::string, std::string> satImages;
+    std::map<std::string, std::string> sunImages;
+
     for (unsigned int i = 0; i < 7; i++)
     {
-        imageDaysDirNormalised = imageDirNormalised + "/" + days[i];
+        imageDaysDirNormalised = imageDirNormalised + "/" + daysLong[i];
         for (const auto& entry : std::filesystem::directory_iterator(imageDaysDirNormalised))
         {
-            std::cout << entry.path().c_str() << std::endl;
+            
+            std::cout << entry.path() << std::endl;
+            std::wstring currentImageDirW = entry.path().c_str();
+            std::string currentImageDir = ConvertWStrToStr(currentImageDirW);
+            std::cout << currentImageDir << std::endl;
+
+
+            std::string currentEntry = currentImageDir;
+            std::string nameOfImage;
+            std::reverse(currentEntry.begin(), currentEntry.end());
+            std::cout << "Reversed:" << std::endl;
+            std::cout << currentEntry << std::endl;
+            for (unsigned int i = 0; i < currentEntry.length(); i++)
+            {
+                if (currentEntry[i] == '/') {
+                    break;
+                }
+                nameOfImage.push_back(currentEntry[i]);
+            
+            }
+            std::reverse(nameOfImage.begin(), nameOfImage.end());
+            std::cout << nameOfImage << std::endl;
+
+            if (nameOfImage[0] == 'M' && nameOfImage[1] == 'o' && nameOfImage[2] == 'n')
+            {
+                monImages.emplace(nameOfImage, daysLong[0]);
+            }
+            else if (nameOfImage[0] == 'T' && nameOfImage[1] == 'u' && nameOfImage[2] == 'e')
+            {
+                tueImages.emplace(nameOfImage, daysLong[1]);
+            }
+            else if (nameOfImage[0] == 'W' && nameOfImage[1] == 'e' && nameOfImage[2] == 'd')
+            {
+                wedImages.emplace(nameOfImage, daysLong[2]);
+            }
+            else if (nameOfImage[0] == 'T' && nameOfImage[1] == 'h' && nameOfImage[2] == 'u')
+            {
+                thuImages.emplace(nameOfImage, daysLong[3]);
+            }
+            else if (nameOfImage[0] == 'F' && nameOfImage[1] == 'r' && nameOfImage[2] == 'i')
+            {
+                friImages.emplace(nameOfImage, daysLong[4]);
+            }
+            else if (nameOfImage[0] == 'S' && nameOfImage[1] == 'a' && nameOfImage[2] == 't')
+            {
+                satImages.emplace(nameOfImage, daysLong[5]);
+            }
+            else if (nameOfImage[0] == 'S' && nameOfImage[1] == 'u' && nameOfImage[2] == 'n')
+            {
+                sunImages.emplace(nameOfImage, daysLong[6]);
+            }
+
+
         }
             
+    }
+
+    if (currentDay == daysLong[0])
+    {
+
     }
 
     
@@ -182,6 +281,54 @@ int main()
 }
 
 
+//if (currentDay[0] == 'M' && daysString[0] == (const char*)'M' && currentDay[0] == 'o' && daysString[0] == (const char*)'o' && currentDay[0] == 'n' && daysString[0] == (const char*)'n')
+//{
+//    imageDaysDirNormalised = imageDirNormalised + "/Monday";
+//}
+//else if (currentDay[0] == 'T' && daysString[0] == (const char*)'T' && currentDay[0] == 'u' && daysString[0] == (const char*)'u' && currentDay[0] == 'e' && daysString[0] == (const char*)'e')
+//{
+//    imageDaysDirNormalised = imageDirNormalised + "/Tuesday";
+//}
+//else if (currentDay[0] == 'W' && daysString[0] == (const char*)'W' && currentDay[0] == 'e' && daysString[0] == (const char*)'e' && currentDay[0] == 'd' && daysString[0] == (const char*)'d')
+//{
+//    imageDaysDirNormalised = imageDirNormalised + "/Wednesday";
+//}
+//else if (currentDay[0] == 'T' && daysString[0] == (const char*)'T' && currentDay[0] == 'h' && daysString[0] == (const char*)'h' && currentDay[0] == 'u' && daysString[0] == (const char*)'u')
+//{
+//    imageDaysDirNormalised = imageDirNormalised + "/Thursday";
+//}
+//else if (currentDay[0] == 'F' && daysString[0] == (const char*)'F' && currentDay[0] == 'r' && daysString[0] == (const char*)'r' && currentDay[0] == 'i' && daysString[0] == (const char*)'i')
+//{
+//    imageDaysDirNormalised = imageDirNormalised + "/Friday";
+//}
+//else if (currentDay[0] == 'S' && daysString[0] == (const char*)'S' && currentDay[0] == 'a' && daysString[0] == (const char*)'a' && currentDay[0] == 't' && daysString[0] == (const char*)'t')
+//{
+//    imageDaysDirNormalised = imageDirNormalised + "/Saturday";
+//}
+//else if (currentDay[0] == 'S' && daysString[0] == (const char*)'S' && currentDay[0] == 'u' && daysString[0] == (const char*)'u' && currentDay[0] == 'n' && daysString[0] == (const char*)'n')
+//{
+//    imageDaysDirNormalised = imageDirNormalised + "/Sunday";
+//}
 
 
 
+
+// Code for obtaining name and extension of images.
+//std::wstring currentEntryW = entry.path().c_str();
+//std::string currentEntry = ConvertWStrToStr(currentEntryW);
+//currentEntry = NormaliseDir(currentEntry);
+//std::string nameOfImage;
+//std::reverse(currentEntry.begin(), currentEntry.end());
+//std::cout << "Reversed:" << std::endl;
+//std::cout << currentEntry << std::endl;
+//for (unsigned int i = 0; i < currentEntry.length(); i++)
+//{
+//    if (currentEntry[i] == '/') {
+//        break;
+//    }
+//    std::cout << currentEntry[i] << std::endl;
+//    nameOfImage.push_back(currentEntry[i]);
+//
+//}
+//std::reverse(nameOfImage.begin(), nameOfImage.end());
+//std::cout << nameOfImage << std::endl;
