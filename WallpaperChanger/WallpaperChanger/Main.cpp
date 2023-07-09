@@ -1,12 +1,10 @@
 #include <iostream>
 #include <chrono>
 #include <string>
-#include <map>
 #include <fstream>
 #include <Windows.h>
 #include <filesystem>
 
-#include <shlobj.h>
 
 #pragma warning(disable : 4996)
 
@@ -151,6 +149,7 @@ void initFiles()
     {
         std::cout << "Error With initialising Image Directory" << std::endl;
         std::cin.get();
+
     }
 
 
@@ -187,6 +186,7 @@ int main()
     if (!file.is_open())
     {
         std::cout << "Initialising..." << std::endl;
+        std::cout << "Restart application after adding images to the generated subfolders." << std::endl;
         file.close();
         std::ofstream file("Initialised.txt");
         file << "1";
@@ -283,22 +283,23 @@ int main()
                 nameOfImageWithDate.push_back(currentEntry[i]);
             
             }
+
+            std::string nameOfImage;
+            for (unsigned int i = 0; i < nameOfImageWithDate.length(); i++)
+            {
+                if (currentEntry[i] == '\\') {
+                    break;
+                }
+                nameOfImage.push_back(nameOfImageWithDate[i]);
+
+            }
+
             std::reverse(nameOfImageWithDate.begin(), nameOfImageWithDate.end());
+            std::reverse(nameOfImage.begin(), nameOfImage.end());
 
             if (nameOfImageWithDate[0] == 'M' && nameOfImageWithDate[1] == 'o' && nameOfImageWithDate[2] == 'n')
             {
-                std::reverse(nameOfImageWithDate.begin(), nameOfImageWithDate.end());
-                std::string nameOfImage;
-                for (unsigned int i = 0; i < nameOfImageWithDate.length(); i++)
-                {
-                    if (currentEntry[i] == '\\') {
-                        break;
-                    }
-                    nameOfImage.push_back(nameOfImageWithDate[i]);
-
-                }
-
-                std::reverse(nameOfImage.begin(), nameOfImage.end());
+                
                 monImages.emplace_back(nameOfImage);
                 
                 std::wstring tempWString = entry.path().c_str();
@@ -308,18 +309,7 @@ int main()
             }
             else if (nameOfImageWithDate[0] == 'T' && nameOfImageWithDate[1] == 'u' && nameOfImageWithDate[2] == 'e')
             {
-                std::reverse(nameOfImageWithDate.begin(), nameOfImageWithDate.end());
-                std::string nameOfImage;
-                for (unsigned int i = 0; i < nameOfImageWithDate.length(); i++)
-                {
-                    if (currentEntry[i] == '\\') {
-                        break;
-                    }
-                    nameOfImage.push_back(nameOfImageWithDate[i]);
-
-                }
-
-                std::reverse(nameOfImage.begin(), nameOfImage.end());
+                
                 tueImages.emplace_back(nameOfImage);
 
                 std::wstring tempWString = entry.path().c_str();
@@ -328,18 +318,7 @@ int main()
             }
             else if (nameOfImageWithDate[0] == 'W' && nameOfImageWithDate[1] == 'e' && nameOfImageWithDate[2] == 'd')
             {
-                std::reverse(nameOfImageWithDate.begin(), nameOfImageWithDate.end());
-                std::string nameOfImage;
-                for (unsigned int i = 0; i < nameOfImageWithDate.length(); i++)
-                {
-                    if (currentEntry[i] == '\\') {
-                        break;
-                    }
-                    nameOfImage.push_back(nameOfImageWithDate[i]);
-
-                }
-
-                std::reverse(nameOfImage.begin(), nameOfImage.end());
+                
                 wedImages.emplace_back(nameOfImage);
 
                 std::wstring tempWString = entry.path().c_str();
@@ -348,18 +327,7 @@ int main()
             }
             else if (nameOfImageWithDate[0] == 'T' && nameOfImageWithDate[1] == 'h' && nameOfImageWithDate[2] == 'u')
             {
-                std::reverse(nameOfImageWithDate.begin(), nameOfImageWithDate.end());
-                std::string nameOfImage;
-                for (unsigned int i = 0; i < nameOfImageWithDate.length(); i++)
-                {
-                    if (currentEntry[i] == '\\') {
-                        break;
-                    }
-                    nameOfImage.push_back(nameOfImageWithDate[i]);
-
-                }
-
-                std::reverse(nameOfImage.begin(), nameOfImage.end());
+                
                 thuImages.emplace_back(nameOfImage);
 
                 std::wstring tempWString = entry.path().c_str();
@@ -368,18 +336,7 @@ int main()
             }
             else if (nameOfImageWithDate[0] == 'F' && nameOfImageWithDate[1] == 'r' && nameOfImageWithDate[2] == 'i')
             {
-                std::reverse(nameOfImageWithDate.begin(), nameOfImageWithDate.end());
-                std::string nameOfImage;
-                for (unsigned int i = 0; i < nameOfImageWithDate.length(); i++)
-                {
-                    if (currentEntry[i] == '\\') {
-                        break;
-                    }
-                    nameOfImage.push_back(nameOfImageWithDate[i]);
-
-                }
-
-                std::reverse(nameOfImage.begin(), nameOfImage.end());
+                
                 friImages.emplace_back(nameOfImage);
 
                 std::wstring tempWString = entry.path().c_str();
@@ -388,18 +345,7 @@ int main()
             }
             else if (nameOfImageWithDate[0] == 'S' && nameOfImageWithDate[1] == 'a' && nameOfImageWithDate[2] == 't')
             {
-                std::reverse(nameOfImageWithDate.begin(), nameOfImageWithDate.end());
-                std::string nameOfImage;
-                for (unsigned int i = 0; i < nameOfImageWithDate.length(); i++)
-                {
-                    if (currentEntry[i] == '\\') {
-                        break;
-                    }
-                    nameOfImage.push_back(nameOfImageWithDate[i]);
-
-                }
-
-                std::reverse(nameOfImage.begin(), nameOfImage.end());
+                
                 satImages.emplace_back(nameOfImage);
 
                 std::wstring tempWString = entry.path().c_str();
@@ -408,18 +354,7 @@ int main()
             }
             else if (nameOfImageWithDate[0] == 'S' && nameOfImageWithDate[1] == 'u' && nameOfImageWithDate[2] == 'n')
             {
-                std::reverse(nameOfImageWithDate.begin(), nameOfImageWithDate.end());
-                std::string nameOfImage;
-                for (unsigned int i = 0; i < nameOfImageWithDate.length(); i++)
-                {
-                    if (currentEntry[i] == '\\') {
-                        break;
-                    }
-                    nameOfImage.push_back(nameOfImageWithDate[i]);
-
-                }
-
-                std::reverse(nameOfImage.begin(), nameOfImage.end());
+                
                 sunImages.emplace_back(nameOfImage);
 
                 std::wstring tempWString = entry.path().c_str();
