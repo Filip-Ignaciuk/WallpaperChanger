@@ -124,7 +124,7 @@ const std::string GetCurrentDay()
     {
         return daysLong[5];
     }
-    else if (shortDate == daysShort[5])
+    else if (shortDate == daysShort[6])
     {
         return daysLong[6];
     }
@@ -572,60 +572,4 @@ int main()
         }
         
     }
-    
-
-    
 }
-
-
-//if (currentDay[0] == 'M' && daysString[0] == (const char*)'M' && currentDay[0] == 'o' && daysString[0] == (const char*)'o' && currentDay[0] == 'n' && daysString[0] == (const char*)'n')
-//{
-//    imageDaysDirNormalised = imageDirNormalised + "/Monday";
-//}
-//else if (currentDay[0] == 'T' && daysString[0] == (const char*)'T' && currentDay[0] == 'u' && daysString[0] == (const char*)'u' && currentDay[0] == 'e' && daysString[0] == (const char*)'e')
-//{
-//    imageDaysDirNormalised = imageDirNormalised + "/Tuesday";
-//}
-//else if (currentDay[0] == 'W' && daysString[0] == (const char*)'W' && currentDay[0] == 'e' && daysString[0] == (const char*)'e' && currentDay[0] == 'd' && daysString[0] == (const char*)'d')
-//{
-//    imageDaysDirNormalised = imageDirNormalised + "/Wednesday";
-//}
-//else if (currentDay[0] == 'T' && daysString[0] == (const char*)'T' && currentDay[0] == 'h' && daysString[0] == (const char*)'h' && currentDay[0] == 'u' && daysString[0] == (const char*)'u')
-//{
-//    imageDaysDirNormalised = imageDirNormalised + "/Thursday";
-//}
-//else if (currentDay[0] == 'F' && daysString[0] == (const char*)'F' && currentDay[0] == 'r' && daysString[0] == (const char*)'r' && currentDay[0] == 'i' && daysString[0] == (const char*)'i')
-//{
-//    imageDaysDirNormalised = imageDirNormalised + "/Friday";
-//}
-//else if (currentDay[0] == 'S' && daysString[0] == (const char*)'S' && currentDay[0] == 'a' && daysString[0] == (const char*)'a' && currentDay[0] == 't' && daysString[0] == (const char*)'t')
-//{
-//    imageDaysDirNormalised = imageDirNormalised + "/Saturday";
-//}
-//else if (currentDay[0] == 'S' && daysString[0] == (const char*)'S' && currentDay[0] == 'u' && daysString[0] == (const char*)'u' && currentDay[0] == 'n' && daysString[0] == (const char*)'n')
-//{
-//    imageDaysDirNormalised = imageDirNormalised + "/Sunday";
-//}
-
-
-
-
-// Code for obtaining name and extension of images.
-//std::wstring currentEntryW = entry.path().c_str();
-//std::string currentEntry = ConvertWStrToStr(currentEntryW);
-//currentEntry = NormaliseDir(currentEntry);
-//std::string nameOfImage;
-//std::reverse(currentEntry.begin(), currentEntry.end());
-//std::cout << "Reversed:" << std::endl;
-//std::cout << currentEntry << std::endl;
-//for (unsigned int i = 0; i < currentEntry.length(); i++)
-//{
-//    if (currentEntry[i] == '/') {
-//        break;
-//    }
-//    std::cout << currentEntry[i] << std::endl;
-//    nameOfImage.push_back(currentEntry[i]);
-//
-//}
-//std::reverse(nameOfImage.begin(), nameOfImage.end());
-//std::cout << nameOfImage << std::endl;
