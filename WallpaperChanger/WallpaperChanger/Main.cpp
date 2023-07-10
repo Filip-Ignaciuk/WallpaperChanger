@@ -219,7 +219,7 @@ int main()
     {
         std::cout << "Failed retrieving the current wallpaper." << std::endl;
     }
-    //C:\Users\Ignac\AppData\Local\Packages\Microsoft.Windows.Photos_8wekyb3d8bbwe\LocalState\PhotosAppBackground\Portal Wallpaper Dual Monitors 20 Amazing Dual Screen Moni.jpg
+
     // Location of the start of the image name.
     unsigned int j = 4;
 
