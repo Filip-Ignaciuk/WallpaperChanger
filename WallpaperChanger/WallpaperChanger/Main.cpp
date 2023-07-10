@@ -4,34 +4,27 @@
 #include <fstream>
 #include <Windows.h>
 #include <filesystem>
-
+#include <codecvt>
 
 #pragma warning(disable : 4996)
 
 
-// Conversion of Wstrings to strings
+// Conversion of wStrings to strings
 std::string ConvertWStrToStr(const std::wstring& wStr)
 {
-    std::string normString;
-    for (unsigned int i = 0; i < wStr.size(); i++)
-    {
-        normString.push_back(wStr[i]);
-    }
-    return normString;
-
-    // Offical way
-    //std::wstring_convert<std::codecvt_utf8_utf16<char16_t>, char16_t> convert;
-    //std::string dest = convert.to_bytes(source);
+    std::u16string uStr(wStr.begin(), wStr.end());
+    std::wstring_convert<std::codecvt_utf8_utf16<char16_t>, char16_t> convert;
+    return convert.to_bytes(uStr);
 }
 
+// Conversion of strings to wStrings.
 std::wstring ConvertStrToWStr(const std::string& str)
 {
-    std::wstring wString;
-    for (unsigned int i = 0; i < str.length(); i++)
-    {
-        wString.push_back(str[i]);
-    }
-    return wString;
+
+    std::wstring_convert<std::codecvt_utf8_utf16<char16_t>, char16_t> convert;
+    std::u16string dest = convert.from_bytes(str);
+    std::wstring final(dest.begin(), dest.end());
+    return final;
 }
 
 // Converting all the \\ shlashes into one singular forward slash.
@@ -125,6 +118,10 @@ const std::string GetCurrentDay()
     else if (shortDate == daysShort[6])
     {
         return daysLong[6];
+    }
+    else
+    {
+        return "";
     }
 }
 
