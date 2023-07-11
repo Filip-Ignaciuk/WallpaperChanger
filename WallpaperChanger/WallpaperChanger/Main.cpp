@@ -9,7 +9,6 @@
 
 #pragma warning(disable : 4996)
 
-
 // Conversion of wStrings to strings
 std::string ConvertWStrToStr(const std::wstring& wStr)
 {
@@ -140,6 +139,7 @@ std::string GetDocumentDir()
 }
 
 const std::string documentDir = GetDocumentDir();
+const std::string imageDir = documentDir + "/WallpaperChanger/Images";
 const std::string currentDay = GetCurrentDay();
 
 
@@ -151,11 +151,18 @@ const std::string currentDay = GetCurrentDay();
 void initFiles()
 {
     std::string documentDirCopy = documentDir;
-    std::string documentDirNormalised = NormaliseDir(documentDirCopy);
-    std::string imageDir = documentDirNormalised + "/WallpaperChanger/Images";
-    std::filesystem::path path = "C:/Users/Ignac/Documents/WallpaperChanger/Images";
+    std::string imageDir = NormaliseDir(documentDirCopy) + "/WallpaperChanger";
 
-    if (std::filesystem::create_directory(path.c_str()) == 0)
+    if (std::filesystem::create_directory(imageDir) == 0)
+    {
+        std::cout << "Error With initialising WallpaperChanger Directory" << std::endl;
+        std::cin.get();
+    
+    }
+
+    imageDir = imageDir + "/Images";
+
+    if (std::filesystem::create_directory(imageDir) == 0)
     {
         std::cout << "Error With initialising Image Directory" << std::endl;
         std::cin.get();
@@ -192,20 +199,20 @@ int main()
     if (!file.is_open())
     {
         initFiles();
-
         std::cout << "Initialising..." << std::endl;
         std::cout << "Restart application after adding images to the generated subfolders." << std::endl;
+        std::cout << "The subfolders are located within your documents folder." << std::endl;
         file.close();
-        std::ofstream file("Initialised.txt");
+        std::ofstream file(documentDir + "/WallpaperChanger/Initialised.txt");
         file << "1";
         file.close();
+        return 0;
 
     }
 
 
     
     // Accessing registry so that we know what the current wallpaper is.
-    //WallPaper
     HKEY hKey;
     LONG lRes = RegOpenKeyExW(HKEY_CURRENT_USER, L"Control Panel\\Desktop", 0, KEY_READ, &hKey);
 
@@ -247,7 +254,7 @@ int main()
     }
 
 
-    std::string imageDaysDirNormalised;
+    std::string imageDirDay;
 
 
     std::vector<std::string> monImages;
@@ -267,40 +274,40 @@ int main()
 
     for (unsigned int i = 0; i < 7; i++)
     {
-        //imageDaysDirNormalised = imageDirNormalised + "/" + daysLong[i];
-        for (const auto& entry : std::filesystem::directory_iterator(imageDaysDirNormalised))
+        imageDirDay = imageDir + "/" + daysLong[i];
+        for (const auto& entry : std::filesystem::directory_iterator(imageDirDay))
         {
             
             std::wstring currentImageDirW = entry.path().c_str();
             std::string currentImageDir = ConvertWStrToStr(currentImageDirW);
 
+            std::string currentItemDir = ConvertWStrToStr(entry.path().c_str());
 
-            std::string currentEntry = currentImageDir;
-            std::string nameOfImageWithDate;
-            std::reverse(currentEntry.begin(), currentEntry.end());
-            for (unsigned int i = 0; i < currentEntry.length(); i++)
+            std::string nameOfItemWithDate;
+            std::reverse(currentItemDir.begin(), currentItemDir.end());
+            for (unsigned int i = 0; i < currentItemDir.length(); i++)
             {
-                if (currentEntry[i] == '/') {
+                if (currentItemDir[i] == '/') {
                     break;
                 }
-                nameOfImageWithDate.push_back(currentEntry[i]);
+                nameOfItemWithDate.push_back(currentItemDir[i]);
             
             }
 
             std::string nameOfImage;
-            for (unsigned int i = 0; i < nameOfImageWithDate.length(); i++)
+            for (unsigned int i = 0; i < nameOfItemWithDate.length(); i++)
             {
-                if (currentEntry[i] == '\\') {
+                if (currentItemDir[i] == '\\') {
                     break;
                 }
-                nameOfImage.push_back(nameOfImageWithDate[i]);
+                nameOfImage.push_back(nameOfItemWithDate[i]);
 
             }
 
-            std::reverse(nameOfImageWithDate.begin(), nameOfImageWithDate.end());
+            std::reverse(nameOfItemWithDate.begin(), nameOfItemWithDate.end());
             std::reverse(nameOfImage.begin(), nameOfImage.end());
 
-            if (nameOfImageWithDate[0] == 'M' && nameOfImageWithDate[1] == 'o' && nameOfImageWithDate[2] == 'n')
+            if (nameOfItemWithDate[0] == 'M' && nameOfItemWithDate[1] == 'o' && nameOfItemWithDate[2] == 'n')
             {
                 
                 monImages.emplace_back(nameOfImage);
@@ -310,7 +317,7 @@ int main()
                 monImagesDir.emplace_back(tempWString);
 
             }
-            else if (nameOfImageWithDate[0] == 'T' && nameOfImageWithDate[1] == 'u' && nameOfImageWithDate[2] == 'e')
+            else if (nameOfItemWithDate[0] == 'T' && nameOfItemWithDate[1] == 'u' && nameOfItemWithDate[2] == 'e')
             {
                 
                 tueImages.emplace_back(nameOfImage);
@@ -319,7 +326,7 @@ int main()
                 tempWString = UnNormaliseDir(tempWString);
                 tueImagesDir.emplace_back(tempWString);
             }
-            else if (nameOfImageWithDate[0] == 'W' && nameOfImageWithDate[1] == 'e' && nameOfImageWithDate[2] == 'd')
+            else if (nameOfItemWithDate[0] == 'W' && nameOfItemWithDate[1] == 'e' && nameOfItemWithDate[2] == 'd')
             {
                 
                 wedImages.emplace_back(nameOfImage);
@@ -328,7 +335,7 @@ int main()
                 tempWString = UnNormaliseDir(tempWString);
                 wedImagesDir.emplace_back(tempWString);
             }
-            else if (nameOfImageWithDate[0] == 'T' && nameOfImageWithDate[1] == 'h' && nameOfImageWithDate[2] == 'u')
+            else if (nameOfItemWithDate[0] == 'T' && nameOfItemWithDate[1] == 'h' && nameOfItemWithDate[2] == 'u')
             {
                 
                 thuImages.emplace_back(nameOfImage);
@@ -337,7 +344,7 @@ int main()
                 tempWString = UnNormaliseDir(tempWString);
                 thuImagesDir.emplace_back(tempWString);
             }
-            else if (nameOfImageWithDate[0] == 'F' && nameOfImageWithDate[1] == 'r' && nameOfImageWithDate[2] == 'i')
+            else if (nameOfItemWithDate[0] == 'F' && nameOfItemWithDate[1] == 'r' && nameOfItemWithDate[2] == 'i')
             {
                 
                 friImages.emplace_back(nameOfImage);
@@ -346,7 +353,7 @@ int main()
                 tempWString = UnNormaliseDir(tempWString);
                 friImagesDir.emplace_back(tempWString);
             }
-            else if (nameOfImageWithDate[0] == 'S' && nameOfImageWithDate[1] == 'a' && nameOfImageWithDate[2] == 't')
+            else if (nameOfItemWithDate[0] == 'S' && nameOfItemWithDate[1] == 'a' && nameOfItemWithDate[2] == 't')
             {
                 
                 satImages.emplace_back(nameOfImage);
@@ -355,7 +362,7 @@ int main()
                 tempWString = UnNormaliseDir(tempWString);
                 satImagesDir.emplace_back(tempWString);
             }
-            else if (nameOfImageWithDate[0] == 'S' && nameOfImageWithDate[1] == 'u' && nameOfImageWithDate[2] == 'n')
+            else if (nameOfItemWithDate[0] == 'S' && nameOfItemWithDate[1] == 'u' && nameOfItemWithDate[2] == 'n')
             {
                 
                 sunImages.emplace_back(nameOfImage);
