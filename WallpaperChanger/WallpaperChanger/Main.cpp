@@ -5,6 +5,7 @@
 #include <Windows.h>
 #include <filesystem>
 #include <codecvt>
+#include <ShlObj.h>
 
 #pragma warning(disable : 4996)
 
@@ -18,7 +19,7 @@ std::string ConvertWStrToStr(const std::wstring& wStr)
 }
 
 // Conversion of strings to wStrings.
-std::wstring ConvertStrToWStr(const std::string& str)
+const std::wstring ConvertStrToWStr(const std::string& str)
 {
 
     std::wstring_convert<std::codecvt_utf8_utf16<char16_t>, char16_t> convert;
@@ -28,7 +29,7 @@ std::wstring ConvertStrToWStr(const std::string& str)
 }
 
 // Converting all the \\ shlashes into one singular forward slash.
-std::string NormaliseDir(std::string& str)
+const std::string NormaliseDir(std::string& str)
 {
     for (unsigned int i = 0; i < str.size(); i++)
     {
@@ -40,7 +41,7 @@ std::string NormaliseDir(std::string& str)
     return str;
 }
 
-std::wstring NormaliseDir(std::wstring& str)
+const std::wstring NormaliseDir(std::wstring& str)
 {
     for (unsigned int i = 0; i < str.size(); i++)
     {
@@ -52,7 +53,7 @@ std::wstring NormaliseDir(std::wstring& str)
     return str;
 }
 
-std::string UnNormaliseDir(std::string& str)
+const std::string UnNormaliseDir(std::string& str)
 {
     for (unsigned int i = 0; i < str.size(); i++)
     {
@@ -125,11 +126,20 @@ const std::string GetCurrentDay()
     }
 }
 
+std::string GetDocumentDir()
+{
+    TCHAR path[MAX_PATH];
+    if (FAILED(SHGetFolderPath(NULL, CSIDL_MYDOCUMENTS, NULL, SHGFP_TYPE_CURRENT, path))) {
+        std::cout << "Error with obtaining document directory." << std::endl;
+        return "";
+    }
+    else
+    {
+        return ConvertWStrToStr(path);
+    }
+}
 
-static std::filesystem::path currentDirPath = std::filesystem::current_path();
-static std::string currentDir = ConvertWStrToStr(currentDirPath.c_str());;
-static std::string currentDirNormalised = NormaliseDir(currentDir);
-std::string imageDirNormalised = currentDirNormalised + (std::string)"/Images";
+const std::string documentDir = GetDocumentDir();
 const std::string currentDay = GetCurrentDay();
 
 
@@ -140,9 +150,12 @@ const std::string currentDay = GetCurrentDay();
 // Initialising files if they havent been created.
 void initFiles()
 {
+    std::string documentDirCopy = documentDir;
+    std::string documentDirNormalised = NormaliseDir(documentDirCopy);
+    std::string imageDir = documentDirNormalised + "/WallpaperChanger/Images";
+    std::filesystem::path path = "C:/Users/Ignac/Documents/WallpaperChanger/Images";
 
-
-    if (std::filesystem::create_directory(imageDirNormalised.c_str()) == 0)
+    if (std::filesystem::create_directory(path.c_str()) == 0)
     {
         std::cout << "Error With initialising Image Directory" << std::endl;
         std::cin.get();
@@ -152,8 +165,8 @@ void initFiles()
 
     for (unsigned int i = 0; i < 7; i++)
     {
-        std::string dateDir = imageDirNormalised + "/" + daysLong[i];
-        if (std::filesystem::create_directory(dateDir) == false)
+        std::string dateDir = imageDir + "/" + daysLong[i];
+        if (std::filesystem::create_directory(dateDir) == 0)
         {
             std::cout << "Error with initialising Day Directories" << std::endl;
             std::cin.get();
@@ -167,28 +180,26 @@ void initFiles()
 
 
 
-
-
-
-
 int main()
 {
-    // Initialising 
-    currentDirNormalised = NormaliseDir(currentDirNormalised);
-    
+
+
+
 
     // Checking/Initialising files
     std::ifstream file;
-    file.open("Initialised.txt");
+    file.open(documentDir + "/WallpaperChanger/Initialised.txt");
     if (!file.is_open())
     {
+        initFiles();
+
         std::cout << "Initialising..." << std::endl;
         std::cout << "Restart application after adding images to the generated subfolders." << std::endl;
         file.close();
         std::ofstream file("Initialised.txt");
         file << "1";
         file.close();
-        initFiles();
+
     }
 
 
@@ -197,17 +208,12 @@ int main()
     //WallPaper
     HKEY hKey;
     LONG lRes = RegOpenKeyExW(HKEY_CURRENT_USER, L"Control Panel\\Desktop", 0, KEY_READ, &hKey);
-    
-    // Just to convert std::string to std::wstring.
-    std::string RegName = "WallPaper";
-    int size_needed = MultiByteToWideChar(CP_UTF8, 0, &RegName[0], (int)RegName.size(), NULL, 0);
-    std::wstring wstrTo(size_needed, 0);
-    MultiByteToWideChar(CP_UTF8, 0, &RegName[0], (int)RegName.size(), &wstrTo[0], size_needed);
 
 
+    std::wstring RegName = ConvertStrToWStr("WallPaper");
     WCHAR buffer[512];
     DWORD sizeOfBuffer = sizeof(buffer);
-    ULONG error = RegQueryValueExW(hKey, wstrTo.c_str(), 0, NULL, (LPBYTE)buffer, &sizeOfBuffer);
+    ULONG error = RegQueryValueExW(hKey, RegName.c_str(), 0, NULL, (LPBYTE)buffer, &sizeOfBuffer);
 
 
     std::wstring dirw;
@@ -261,7 +267,7 @@ int main()
 
     for (unsigned int i = 0; i < 7; i++)
     {
-        imageDaysDirNormalised = imageDirNormalised + "/" + daysLong[i];
+        //imageDaysDirNormalised = imageDirNormalised + "/" + daysLong[i];
         for (const auto& entry : std::filesystem::directory_iterator(imageDaysDirNormalised))
         {
             
