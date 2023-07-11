@@ -7,6 +7,7 @@
 #include <codecvt>
 #include <ShlObj.h>
 
+
 #pragma warning(disable : 4996)
 
 // Conversion of wStrings to strings
@@ -40,113 +41,38 @@ const std::string NormaliseDir(std::string& str)
     return str;
 }
 
-const std::wstring NormaliseDir(std::wstring& str)
+
+const int GetCurrentDay()
 {
-    for (unsigned int i = 0; i < str.size(); i++)
-    {
-        if (str[i] == '\\')
-        {
-            str[i] = '/';
-        }
-    }
-    return str;
-}
+    time_t rawtime;
+    tm* timeinfo;
+    time(&rawtime);
+    timeinfo = localtime(&rawtime);
+    
+    int wday = timeinfo->tm_wday;
 
-const std::string UnNormaliseDir(std::string& str)
-{
-    for (unsigned int i = 0; i < str.size(); i++)
-    {
-        if (str[i] == '/')
-        {
-            str[i] = '\\';
-        }
-    }
-    return str;
-}
+    return wday;
 
-std::wstring UnNormaliseDir(std::wstring& str)
-{
-    for (unsigned int i = 0; i < str.size(); i++)
-    {
-        if (str[i] == '/')
-        {
-            str[i] = '\\';
-        }
-    }
-    return str;
-}
-
-
-
-const char* daysLong[7] = { "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday" };
-const char* daysShort[7] = { "Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun" };
-
-
-
-
-// Gives you the current day
-const std::string GetCurrentDay()
-{
-    const auto now = std::chrono::system_clock::now();
-    const std::time_t t_c = std::chrono::system_clock::to_time_t(now);
-    const std::string fullDate = std::ctime(&t_c);
-    std::string shortDate = fullDate.substr(0, 3);
-    if (shortDate == daysShort[0])
-    {
-        return daysLong[0];
-    }
-    else if (shortDate == daysShort[1])
-    {
-        return daysLong[1];
-    }
-    else if (shortDate == daysShort[2])
-    {
-        return daysLong[2];
-    }
-    else if (shortDate == daysShort[3])
-    {
-        return daysLong[3];
-    }
-    else if (shortDate == daysShort[4])
-    {
-        return daysLong[4];
-    }
-    else if (shortDate == daysShort[5])
-    {
-        return daysLong[5];
-    }
-    else if (shortDate == daysShort[6])
-    {
-        return daysLong[6];
-    }
-    else
-    {
-        return "";
-    }
 }
 
 std::string GetDocumentDir()
 {
     TCHAR path[MAX_PATH];
-    if (FAILED(SHGetFolderPath(NULL, CSIDL_MYDOCUMENTS, NULL, SHGFP_TYPE_CURRENT, path))) {
-        std::cout << "Error with obtaining document directory." << std::endl;
-        return "";
-    }
-    else
-    {
+    if (!FAILED(SHGetFolderPath(NULL, CSIDL_MYDOCUMENTS, NULL, SHGFP_TYPE_CURRENT, path))) {
         return ConvertWStrToStr(path);
     }
+
+    std::cout << "Error with obtaining document directory." << std::endl;
+    return "";
 }
 
+
+const char* daysLong[7] = { "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday" };
 const std::string documentDir = GetDocumentDir();
 // In this case we can add / at the end of the directory as in all references of the variable it needs it.
 std::string documentDirCopy = documentDir;
 const std::string imageDir = NormaliseDir(documentDirCopy) + "/WallpaperChanger/Images/"; 
-const std::string currentDay = GetCurrentDay();
-
-
-
-
+const int currentDay = GetCurrentDay();
 
 
 // Initialising files if they havent been created.
@@ -182,11 +108,6 @@ void initFiles()
         }
     }
 }
-
-
-
-
-
 
 
 int main()
@@ -345,7 +266,7 @@ int main()
 
     bool isCorrect = false;
 
-    if (currentDay == daysLong[0])
+    if (currentDay == 1)
     {
         for (unsigned int i = 0; i < monImages.size(); i++)
         {
@@ -355,7 +276,7 @@ int main()
             }
         }
     }
-    else if (currentDay == daysLong[1])
+    else if (currentDay == 2)
     {
         for (unsigned int i = 0; i < tueImages.size(); i++)
         {
@@ -365,7 +286,7 @@ int main()
             }
         }
     }
-    else if (currentDay == daysLong[2])
+    else if (currentDay == 3)
     {
         for (unsigned int i = 0; i < wedImages.size(); i++)
         {
@@ -375,7 +296,7 @@ int main()
             }
         }
     }
-    else if (currentDay == daysLong[3])
+    else if (currentDay == 4)
     {
         for (unsigned int i = 0; i < thuImages.size(); i++)
         {
@@ -385,7 +306,7 @@ int main()
             }
         }
     }
-    else if (currentDay == daysLong[4])
+    else if (currentDay == 5)
     {
         for (unsigned int i = 0; i < friImages.size(); i++)
         {
@@ -395,7 +316,7 @@ int main()
             }
         }
     }
-    else if (currentDay == daysLong[5])
+    else if (currentDay == 6)
     {
         for (unsigned int i = 0; i < satImages.size(); i++)
         {
@@ -405,7 +326,7 @@ int main()
             }
         }
     }
-    else if (currentDay == daysLong[6])
+    else if (currentDay == 7)
     {
         for (unsigned int i = 0; i < sunImages.size(); i++)
         {
@@ -420,7 +341,7 @@ int main()
     {
         std::wstring imageDirW = ConvertStrToWStr(imageDir);
         // Better to convert image names here than at list, as we only have to do it once instead of multiple times.
-        if (currentDay == daysLong[0])
+        if (currentDay == 1)
         {
             int value = rand() % monImages.size();
             std::wstring completeDir = imageDirW + ConvertStrToWStr("Monday/") + ConvertStrToWStr(monImages[value]);
@@ -430,7 +351,7 @@ int main()
                 std::cout << "Error" << std::endl;
             }
         }
-        else if(currentDay == daysLong[1])
+        else if(currentDay == 2)
         {
             int value = rand() % tueImages.size();
             std::wstring completeDir = imageDirW + ConvertStrToWStr("Tuesday/") + ConvertStrToWStr(tueImages[value]);
@@ -440,7 +361,7 @@ int main()
                 std::cout << "Error" << std::endl;
             }
         }
-        else if (currentDay == daysLong[2])
+        else if (currentDay == 3)
         {
             int value = rand() % wedImages.size();
             std::wstring completeDir = imageDirW + ConvertStrToWStr("Wednesday/") + ConvertStrToWStr(wedImages[value]);
@@ -450,7 +371,7 @@ int main()
                 std::cout << "Error" << std::endl;
             }
         }
-        else if (currentDay == daysLong[3])
+        else if (currentDay == 4)
         {
             int value = rand() % thuImages.size();
             std::wstring completeDir = imageDirW + ConvertStrToWStr("Thursday/") + ConvertStrToWStr(thuImages[value]);
@@ -460,7 +381,7 @@ int main()
                 std::cout << "Error" << std::endl;
             }
         }
-        else if (currentDay == daysLong[4])
+        else if (currentDay == 5)
         {
             int value = rand() % friImages.size();
             std::wstring completeDir = imageDirW + ConvertStrToWStr("Friday/") + ConvertStrToWStr(friImages[value]);
@@ -470,7 +391,7 @@ int main()
                 std::cout << "Error" << std::endl;
             }
         }
-        else if (currentDay == daysLong[5])
+        else if (currentDay == 6)
         {
             int value = rand() % satImages.size();
             std::wstring completeDir = imageDirW + ConvertStrToWStr("Saturday/") + ConvertStrToWStr(satImages[value]);
@@ -480,7 +401,7 @@ int main()
                 std::cout << "Error" << std::endl;
             }
         }
-        else if (currentDay == daysLong[6])
+        else if (currentDay == 7)
         {
             int value = rand() % sunImages.size();
             std::wstring completeDir = imageDirW + ConvertStrToWStr("Sunday/") + ConvertStrToWStr(sunImages[value]);
