@@ -10,4 +10,4 @@ Currently all versions are supported.
 
 ## Reporting a Vulnerability
 
-If a vulnerability is present, please contact me at Ignaciuk.Filip@gmail.com and provide details on what the Vulnerability is, I will try to resolve it as fast as I can.
+If a vulnerability is present, please contact me at Ignaciuk.Filip@gmail.com and provide details on what the vulnerability is. I will try to resolve it as fast as I can.
