@@ -63,6 +63,7 @@ std::string GetDocumentDir()
     }
 
     std::cout << "Error with obtaining document directory." << std::endl;
+    std::cin.get();
     return "";
 }
 
@@ -156,6 +157,7 @@ int main()
         std::cout << "Initialising..." << std::endl;
         std::cout << "Restart application after adding images to the generated subfolders." << std::endl;
         std::cout << "The subfolders are located within your documents folder." << std::endl;
+        std::cin.get();
         file.close();
         std::ofstream file(documentDir + "/WallpaperChanger/Initialised.txt");
         file << "1";
@@ -185,6 +187,7 @@ int main()
     else
     {
         std::cout << "Failed retrieving the current wallpaper." << std::endl;
+        std::cin.get();
     }
 
     // Location of the start of the image name.
@@ -268,13 +271,23 @@ int main()
         }
     }
 
-    int value = rand() % Images.size();
-    std::wstring completeDir = imageDirW + dateDirW + ConvertStrToWStr(Images[value]);
-
-    auto imageSpecificDir = completeDir.c_str();
-    if (!SystemParametersInfo(SPI_SETDESKWALLPAPER, 0, (void*)imageSpecificDir, SPIF_SENDCHANGE))
+    if (Images.size())
     {
-        std::cout << "Error" << std::endl;
+        int value = rand() % Images.size();
+        std::wstring completeDir = imageDirW + dateDirW + ConvertStrToWStr(Images[value]);
+
+        auto imageSpecificDir = completeDir.c_str();
+        if (!SystemParametersInfo(SPI_SETDESKWALLPAPER, 0, (void*)imageSpecificDir, SPIF_SENDCHANGE))
+        {
+            std::cout << "Error with setting wallpaper." << std::endl;
+            std::cin.get();
+        }
+    }
+    else
+    {
+        std::cout << "No images within the images folders." << std::endl;
+        std::cout << "Go to your images folder located within your documents folder. Then place images to the dates you would like." << std::endl;
+        std::cin.get();
     }
 
     return 0;
