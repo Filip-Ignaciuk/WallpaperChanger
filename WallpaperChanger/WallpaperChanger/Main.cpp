@@ -209,6 +209,7 @@ int main()
 
 
     std::string imageDirDay;
+    std::wstring dateDirW;
 
 
     std::vector<std::string> Images;
@@ -219,181 +220,62 @@ int main()
     if (currentDay == 1)
     {
         imageDirDay = imageDir + daysLong[0];
-
-        for (const auto& entry : std::filesystem::directory_iterator(imageDirDay))
-        {
-            GetImages(entry, Images);
-        }
-
-        for (unsigned int i = 0; i < Images.size(); i++)
-        {
-            if (Images[i] == nameOfCurrentImage)
-            {
-                isCorrect = true;
-            }
-        }
-        // Better to convert image names here than at list, as we only have to do it once instead of multiple times.
-        int value = rand() % Images.size();
-        std::wstring completeDir = imageDirW + ConvertStrToWStr("Monday/") + ConvertStrToWStr(Images[value]);
-        auto imageSpecificDir = completeDir.c_str();
-        if (!SystemParametersInfo(SPI_SETDESKWALLPAPER, 0, (void*)imageSpecificDir, SPIF_SENDCHANGE))
-        {
-            std::cout << "Error" << std::endl;
-        }
+        dateDirW = ConvertStrToWStr("Monday/");
+        
     }
     else if (currentDay == 2)
     {
         imageDirDay = imageDir + daysLong[1];
-
-        for (const auto& entry : std::filesystem::directory_iterator(imageDirDay))
-        {
-            GetImages(entry, Images);
-        }
-
-        for (unsigned int i = 0; i < Images.size(); i++)
-        {
-            if (Images[i] == nameOfCurrentImage)
-            {
-                isCorrect = true;
-            }
-        }
-
-        int value = rand() % Images.size();
-        std::wstring completeDir = imageDirW + ConvertStrToWStr("Tuesday/") + ConvertStrToWStr(Images[value]);
-        auto imageSpecificDir = completeDir.c_str();
-        if (!SystemParametersInfo(SPI_SETDESKWALLPAPER, 0, (void*)imageSpecificDir, SPIF_SENDCHANGE))
-        {
-            std::cout << "Error" << std::endl;
-        }
+        dateDirW = ConvertStrToWStr("Tuesday/");
 
     }
     else if (currentDay == 3)
     {
         imageDirDay = imageDir + daysLong[2];
-
-        for (const auto& entry : std::filesystem::directory_iterator(imageDirDay))
-        {
-            GetImages(entry, Images);
-        }
-
-        for (unsigned int i = 0; i < Images.size(); i++)
-        {
-            if (Images[i] == nameOfCurrentImage)
-            {
-                isCorrect = true;
-            }
-        }
-
-        int value = rand() % Images.size();
-        std::wstring completeDir = imageDirW + ConvertStrToWStr("Wednesday/") + ConvertStrToWStr(Images[value]);
-        auto imageSpecificDir = completeDir.c_str();
-        if (!SystemParametersInfo(SPI_SETDESKWALLPAPER, 0, (void*)imageSpecificDir, SPIF_SENDCHANGE))
-        {
-            std::cout << "Error" << std::endl;
-        }
+        dateDirW = ConvertStrToWStr("Wednesday/");
     }
     else if (currentDay == 4)
     {
         imageDirDay = imageDir + daysLong[3];
-
-        for (const auto& entry : std::filesystem::directory_iterator(imageDirDay))
-        {
-            GetImages(entry, Images);
-        }
-
-        for (unsigned int i = 0; i < Images.size(); i++)
-        {
-            if (Images[i] == nameOfCurrentImage)
-            {
-                isCorrect = true;
-            }
-        }
-
-        int value = rand() % Images.size();
-        std::wstring completeDir = imageDirW + ConvertStrToWStr("Thursday/") + ConvertStrToWStr(Images[value]);
-        auto imageSpecificDir = completeDir.c_str();
-        if (!SystemParametersInfo(SPI_SETDESKWALLPAPER, 0, (void*)imageSpecificDir, SPIF_SENDCHANGE))
-        {
-            std::cout << "Error" << std::endl;
-        }
-
+        dateDirW = ConvertStrToWStr("Thursday/");
     }
     else if (currentDay == 5)
     {
         imageDirDay = imageDir + daysLong[4];
-
-        for (const auto& entry : std::filesystem::directory_iterator(imageDirDay))
-        {
-            GetImages(entry, Images);
-        }
-
-        for (unsigned int i = 0; i < Images.size(); i++)
-        {
-            if (Images[i] == nameOfCurrentImage)
-            {
-                isCorrect = true;
-            }
-        }
-
-        int value = rand() % Images.size();
-        std::wstring completeDir = imageDirW + ConvertStrToWStr("Friday/") + ConvertStrToWStr(Images[value]);
-        auto imageSpecificDir = completeDir.c_str();
-        if (!SystemParametersInfo(SPI_SETDESKWALLPAPER, 0, (void*)imageSpecificDir, SPIF_SENDCHANGE))
-        {
-            std::cout << "Error" << std::endl;
-        }
-
+        dateDirW = ConvertStrToWStr("Friday/");
     }
     else if (currentDay == 6)
     {
         imageDirDay = imageDir + daysLong[5];
-
-        for (const auto& entry : std::filesystem::directory_iterator(imageDirDay))
-        {
-            GetImages(entry, Images);
-        }
-
-        for (unsigned int i = 0; i < Images.size(); i++)
-        {
-            if (Images[i] == nameOfCurrentImage)
-            {
-                isCorrect = true;
-            }
-        }
-
-        int value = rand() % Images.size();
-        std::wstring completeDir = imageDirW + ConvertStrToWStr("Saturday/") + ConvertStrToWStr(Images[value]);
-        auto imageSpecificDir = completeDir.c_str();
-        if (!SystemParametersInfo(SPI_SETDESKWALLPAPER, 0, (void*)imageSpecificDir, SPIF_SENDCHANGE))
-        {
-            std::cout << "Error" << std::endl;
-        }
+        dateDirW = ConvertStrToWStr("Saturday/");
     }
     else if (currentDay == 7)
     {
         imageDirDay = imageDir + daysLong[6];
-
-        for (const auto& entry : std::filesystem::directory_iterator(imageDirDay))
-        {
-            GetImages(entry, Images);
-        }
-
-        for (unsigned int i = 0; i < Images.size(); i++)
-        {
-            if (Images[i] == nameOfCurrentImage)
-            {
-                isCorrect = true;
-            }
-        }
-
-        int value = rand() % Images.size();
-        std::wstring completeDir = imageDirW + ConvertStrToWStr("Sunday/") + ConvertStrToWStr(Images[value]);
-        auto imageSpecificDir = completeDir.c_str();
-        if (!SystemParametersInfo(SPI_SETDESKWALLPAPER, 0, (void*)imageSpecificDir, SPIF_SENDCHANGE))
-        {
-            std::cout << "Error" << std::endl;
-        }
-
+        dateDirW = ConvertStrToWStr("Sunday/");
     }
+
+    for (const auto& entry : std::filesystem::directory_iterator(imageDirDay))
+    {
+        GetImages(entry, Images);
+    }
+
+    for (unsigned int i = 0; i < Images.size(); i++)
+    {
+        if (Images[i] == nameOfCurrentImage)
+        {
+            isCorrect = true;
+        }
+    }
+
+    int value = rand() % Images.size();
+    std::wstring completeDir = imageDirW + dateDirW + ConvertStrToWStr(Images[value]);
+
+    auto imageSpecificDir = completeDir.c_str();
+    if (!SystemParametersInfo(SPI_SETDESKWALLPAPER, 0, (void*)imageSpecificDir, SPIF_SENDCHANGE))
+    {
+        std::cout << "Error" << std::endl;
+    }
+
     return 0;
 }

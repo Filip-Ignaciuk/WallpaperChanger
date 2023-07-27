@@ -23,3 +23,9 @@ WallpaperChanger/x64/Debug/Initialised.txt
 *.suo
 WallpaperChanger/.vs/WallpaperChanger/v17/Browse.VC.opendb
 WallpaperChanger/.vs/WallpaperChanger/v17/Browse.VC.db-wal
+.vs/WallpaperChanger/v17/.wsuo
+.vs/WallpaperChanger/FileContentIndex/read.lock
+.vs/VSWorkspaceState.json
+.vs/slnx.sqlite
+.vs/ProjectSettings.json
+*.db
