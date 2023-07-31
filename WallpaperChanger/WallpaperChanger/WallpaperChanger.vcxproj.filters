@@ -15,15 +15,18 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="WallpaperChanger.cpp">
+    <ClCompile Include="MyForm.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Main.cpp">
+    <ClCompile Include="..\..\..\..\..\..\Desktop\New folder (2)\WallpaperChanger.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="WallpaperChanger.hpp">
+    <ClInclude Include="MyForm.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\..\..\Desktop\New folder (2)\WallpaperChanger.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
