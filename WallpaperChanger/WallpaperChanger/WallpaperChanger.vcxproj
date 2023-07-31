@@ -19,6 +19,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Main.cpp" />
     <ClCompile Include="WallpaperChanger.cpp" />
   </ItemGroup>
   <ItemGroup>

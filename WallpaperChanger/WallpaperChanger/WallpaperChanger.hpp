@@ -20,7 +20,7 @@ private:
     // Converting all the \\ shlashes into one singular forward slash.
     static const std::string NormaliseDir(std::string& str);
 
-    static const int GetCurrentDay();
+    static const int GetCurrentWeekDay();
 
     static std::string GetDocumentDir();
 
@@ -37,6 +37,7 @@ private:
 
     static void GetImages(std::filesystem::directory_entry _entry, std::vector<std::string>& _vector);
 
+    static void SetColorAccent();
 
 public:
     static void StartWallpaperChanger();
