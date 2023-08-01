@@ -111,7 +111,7 @@ void WallpaperChanger::initFiles()
 void WallpaperChanger::initImages()
 {
     std::string imageDateDir;
-    for ( unsigned int i = 0; i < 7 ; i++)
+    for (unsigned int i = 0; i < 7; i++)
     {
         imageDateDir = imageDir + daysLong[i];
 
@@ -313,7 +313,7 @@ void WallpaperChanger::StartWallpaperChanger()
             std::cout << "Error with setting wallpaper." << std::endl;
             std::cin.get();
         }
-    } 
+    }
     else
     {
         std::cout << "No images within the images folder of the current day." << std::endl;
@@ -325,4 +325,7 @@ void WallpaperChanger::StartWallpaperChanger()
 }
 
 
-
+int main()
+{
+    WallpaperChanger::StartWallpaperChanger();
+}

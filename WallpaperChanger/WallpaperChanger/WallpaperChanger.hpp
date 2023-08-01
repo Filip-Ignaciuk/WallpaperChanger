@@ -31,7 +31,7 @@ private:
     static const std::string imageDir;
     static const int currentDay;
 
-    // Initialising files if they havent been created.
+    // Initialising files if they haven't been created.
     static void initFiles();
 
     static void initImages();
