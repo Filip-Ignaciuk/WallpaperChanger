@@ -302,7 +302,7 @@ void WallpaperChanger::StartWallpaperChanger()
     {
         std::cout << "Current Wallpaper is valid." << std::endl;
     }
-    else if (images.size())
+    else if (!images.empty())
     {
         int value = rand() % images.size();
         std::wstring completeDir = imageDirW + dateDirW + ConvertStrToWStr(images[value]);
