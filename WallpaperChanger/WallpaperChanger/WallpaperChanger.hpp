@@ -26,15 +26,18 @@ private:
 
     static const char* daysLong[7];
     static const std::string documentDir;
-    // In this case we can add / at the end of the directory as in all references of the variable it needs it.
-    static std::string documentDirCopy;
+	static std::string documentDirCopy;
     static const std::string imageDir;
     static const int currentDay;
+    static constexpr int numOfConfigs = 3;
+    static const char* configurations[numOfConfigs];
 
     // Initialising files if they haven't been created.
     static void initFiles();
 
     static void initImages();
+
+    static bool CheckIfImageTextFilesIsValid(std::ifstream& _file);
 
     static void GetImages(std::filesystem::directory_entry _entry, std::vector<std::string>& _vector);
 

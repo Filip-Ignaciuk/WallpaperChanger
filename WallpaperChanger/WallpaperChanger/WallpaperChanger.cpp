@@ -71,7 +71,7 @@ const std::string WallpaperChanger::documentDir = GetDocumentDir();
 std::string WallpaperChanger::documentDirCopy = documentDir;
 const std::string WallpaperChanger::imageDir = NormaliseDir(documentDirCopy) + "/WallpaperChanger/Images/";
 const int WallpaperChanger::currentDay = GetCurrentWeekDay();
-
+const char* WallpaperChanger::configurations[numOfConfigs] = { "TimeLimit", "TimeActive", "TimeActivePriority" };
 
 // Initialising files if they havent been created.
 void WallpaperChanger::initFiles()
@@ -110,6 +110,9 @@ void WallpaperChanger::initFiles()
 // Add text files to each image to customise how it is displayed.
 void WallpaperChanger::initImages()
 {
+    
+
+    
     std::string imageDateDir;
     for (unsigned int i = 0; i < 7; i++)
     {
@@ -128,18 +131,44 @@ void WallpaperChanger::initImages()
                     textImageFileDir.pop_back();
                 }
                 textImageFileDir += ".txt";
+
                 std::ifstream textImageFileIF;
                 textImageFileIF.open(textImageFileDir);
-                if (!textImageFileIF.is_open())
+
+                if (!textImageFileIF.is_open() || !CheckIfImageTextFilesIsValid(textImageFileIF))
                 {
                     textImageFileIF.close();
-                    std::ofstream textImageFileOF(textImageFileDir);
-                    // Add stuff
-                    textImageFileOF.close();
+
+                    std::ofstream textImageFileOF;
+                    textImageFileOF.open(textImageFileDir, std::ofstream::out | std::ofstream::trunc);
+
+                    for (size_t i = 0; i < numOfConfigs; i++)
+                    {
+                        std::string input = configurations[i];
+                        input.append("=");
+                        textImageFileOF << input;
+                    }
+                    textImageFileIF.close();
                 }
             }
         }
     }
+}
+
+bool WallpaperChanger::CheckIfImageTextFilesIsValid(std::ifstream& _file)
+{
+    int configIncrement = 0;
+    std::string config;
+    // Checking if each line is concordant with the configurations array.
+	while(std::getline(_file, config))
+	{
+        if(config.find(configurations[configIncrement]) == std::string::npos)
+        {
+            return false;
+        }
+        configIncrement++;
+	}
+    return true;
 }
 
 
