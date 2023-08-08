@@ -27,7 +27,7 @@ const std::wstring WallpaperChanger::ConvertStrToWStr(const std::string& str)
     return final;
 }
 
-// Converting all the \\ shlashes into one singular forward slash.
+// Converting all the \\ slashes into one singular forward slash.
 const std::string WallpaperChanger::NormaliseDir(std::string& str)
 {
     for (unsigned int i = 0; i < str.size(); i++)
@@ -122,7 +122,12 @@ void WallpaperChanger::initImages()
 
             for (const std::string& image : images)
             {
-                std::string textImageFileDir = imageDateDir + image;
+                std::string textImageFileDir = imageDateDir + "/" + image;
+                for (size_t i = 0; i < 4; i++)
+                {
+                    textImageFileDir.pop_back();
+                }
+                textImageFileDir += ".txt";
                 std::ifstream textImageFileIF;
                 textImageFileIF.open(textImageFileDir);
                 if (!textImageFileIF.is_open())
@@ -289,6 +294,8 @@ void WallpaperChanger::StartWallpaperChanger()
     {
         GetImages(entry, images);
     }
+
+    initImages();
 
     for (unsigned int i = 0; i < images.size(); i++)
     {
