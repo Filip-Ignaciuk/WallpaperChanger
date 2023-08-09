@@ -10,46 +10,45 @@
 
 
 #pragma warning(disable : 4996)
-std::string WallpaperChanger::ConvertWStrToStr(const std::wstring& wStr)
+std::string WallpaperChanger::ConvertWStrToStr(const std::wstring& _wStr)
 {
-    std::u16string uStr(wStr.begin(), wStr.end());
+	const std::u16string uStr(_wStr.begin(), _wStr.end());
     std::wstring_convert<std::codecvt_utf8_utf16<char16_t>, char16_t> convert;
     return convert.to_bytes(uStr);
 }
 
 // Conversion of strings to wStrings.
-const std::wstring WallpaperChanger::ConvertStrToWStr(const std::string& str)
+std::wstring WallpaperChanger::ConvertStrToWStr(const std::string& _str)
 {
 
     std::wstring_convert<std::codecvt_utf8_utf16<char16_t>, char16_t> convert;
-    std::u16string dest = convert.from_bytes(str);
+    std::u16string dest = convert.from_bytes(_str);
     std::wstring final(dest.begin(), dest.end());
     return final;
 }
 
 // Converting all the \\ slashes into one singular forward slash.
-const std::string WallpaperChanger::NormaliseDir(std::string& str)
+std::string WallpaperChanger::NormaliseDir(std::string& _str)
 {
-    for (unsigned int i = 0; i < str.size(); i++)
+    for (unsigned int i = 0; i < _str.size(); i++)
     {
-        if (str[i] == '\\')
+        if (_str[i] == '\\')
         {
-            str[i] = '/';
+            _str[i] = '/';
         }
     }
-    return str;
+    return _str;
 }
 
-const int WallpaperChanger::GetCurrentWeekDay()
+int WallpaperChanger::GetCurrentWeekDay()
 {
-    time_t rawtime;
-    tm* timeinfo;
-    time(&rawtime);
-    timeinfo = localtime(&rawtime);
+    time_t rawTime;
+    time(&rawTime);
+    const tm* timeInfo = localtime(&rawTime);
 
-    int wday = timeinfo->tm_wday;
+    const int wDay = timeInfo->tm_wday;
 
-    return wday;
+    return wDay;
 
 }
 
@@ -73,7 +72,7 @@ const std::string WallpaperChanger::imageDir = NormaliseDir(documentDirCopy) + "
 const int WallpaperChanger::currentDay = GetCurrentWeekDay();
 const char* WallpaperChanger::configurations[numOfConfigs] = { "TimeLimit", "TimeActive", "TimeActivePriority" };
 
-// Initialising files if they havent been created.
+// Initialising files if they haven't been created.
 void WallpaperChanger::initFiles()
 {
     std::string documentDirCopy = documentDir;
@@ -108,7 +107,7 @@ void WallpaperChanger::initFiles()
 }
 
 // Add text files to each image to customise how it is displayed.
-void WallpaperChanger::initImages()
+void WallpaperChanger::InitImages()
 {
     
 
@@ -172,7 +171,7 @@ bool WallpaperChanger::CheckIfImageTextFilesIsValid(std::ifstream& _file)
 }
 
 
-void WallpaperChanger::GetImages(std::filesystem::directory_entry _entry, std::vector<std::string>& _vector)
+void WallpaperChanger::GetImages(const std::filesystem::directory_entry& _entry, std::vector<std::string>& _vector)
 {
     std::string currentItemDir = ConvertWStrToStr(_entry.path().c_str());
 
@@ -236,12 +235,12 @@ void WallpaperChanger::StartWallpaperChanger()
     LONG lRes = RegOpenKeyExW(HKEY_CURRENT_USER, L"Control Panel\\Desktop", 0, KEY_READ, &hKey);
 
 
-    std::wstring RegName = ConvertStrToWStr("WallPaper");
+    std::wstring regName = ConvertStrToWStr("WallPaper");
     WCHAR buffer[512];
     DWORD sizeOfBuffer = sizeof(buffer);
     std::wstring dirW;
 
-    if (RegQueryValueExW(hKey, RegName.c_str(), 0, NULL, (LPBYTE)buffer, &sizeOfBuffer) == ERROR_SUCCESS)
+    if (RegQueryValueExW(hKey, regName.c_str(), nullptr, nullptr, reinterpret_cast<LPBYTE>(buffer), &sizeOfBuffer) == ERROR_SUCCESS)
     {
         dirW = buffer;
     }
@@ -324,7 +323,7 @@ void WallpaperChanger::StartWallpaperChanger()
         GetImages(entry, images);
     }
 
-    initImages();
+    InitImages();
 
     for (unsigned int i = 0; i < images.size(); i++)
     {

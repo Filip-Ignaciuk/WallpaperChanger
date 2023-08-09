@@ -12,15 +12,15 @@
 class WallpaperChanger
 {
 private:
-    static std::string ConvertWStrToStr(const std::wstring& wStr);
+    static std::string ConvertWStrToStr(const std::wstring& _wStr);
 
     // Conversion of strings to wStrings.
-    static const std::wstring ConvertStrToWStr(const std::string& str);
+    static std::wstring ConvertStrToWStr(const std::string& _str);
 
-    // Converting all the \\ shlashes into one singular forward slash.
-    static const std::string NormaliseDir(std::string& str);
+    // Converting all the \\ slashes into one singular forward slash.
+    static std::string NormaliseDir(std::string& _str);
 
-    static const int GetCurrentWeekDay();
+    static int GetCurrentWeekDay();
 
     static std::string GetDocumentDir();
 
@@ -35,11 +35,11 @@ private:
     // Initialising files if they haven't been created.
     static void initFiles();
 
-    static void initImages();
+    static void InitImages();
 
     static bool CheckIfImageTextFilesIsValid(std::ifstream& _file);
 
-    static void GetImages(std::filesystem::directory_entry _entry, std::vector<std::string>& _vector);
+    static void GetImages(const std::filesystem::directory_entry& _entry, std::vector<std::string>& _vector);
 
     static void SetColorAccent();
 
