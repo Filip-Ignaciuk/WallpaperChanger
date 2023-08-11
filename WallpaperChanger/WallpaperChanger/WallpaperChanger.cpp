@@ -106,38 +106,35 @@ void WallpaperChanger::InitImages()
     {
         imageDateDir = imageDir + "/" + daysLong[i];
 
-        for (const auto& entry : std::filesystem::directory_iterator(imageDateDir))
+        std::vector<std::string> images;
+        GetImages(imageDateDir, images);
+
+        for (const std::string& image : images)
         {
-            std::vector<std::string> images;
-            GetImages(entry, images);
-
-            for (const std::string& image : images)
+            std::string textImageFileDir = imageDateDir + "/" + image;
+            for (size_t i = 0; i < 4; i++)
             {
-                std::string textImageFileDir = imageDateDir + "/" + image;
-                for (size_t i = 0; i < 4; i++)
+                textImageFileDir.pop_back();
+            }
+            textImageFileDir += ".txt";
+
+            std::ifstream textImageFileIF;
+            textImageFileIF.open(textImageFileDir);
+
+            if (!textImageFileIF.is_open() || !CheckIfImageTextFilesIsValid(textImageFileIF))
+            {
+                textImageFileIF.close();
+
+                std::ofstream textImageFileOF;
+                textImageFileOF.open(textImageFileDir, std::ofstream::out | std::ofstream::trunc);
+
+                for (size_t i = 0; i < numOfConfigs; i++)
                 {
-                    textImageFileDir.pop_back();
+                    std::string input = configurations[i];
+                    input.append("=");
+                    textImageFileOF << input;
                 }
-                textImageFileDir += ".txt";
-
-                std::ifstream textImageFileIF;
-                textImageFileIF.open(textImageFileDir);
-
-                if (!textImageFileIF.is_open() || !CheckIfImageTextFilesIsValid(textImageFileIF))
-                {
-                    textImageFileIF.close();
-
-                    std::ofstream textImageFileOF;
-                    textImageFileOF.open(textImageFileDir, std::ofstream::out | std::ofstream::trunc);
-
-                    for (size_t i = 0; i < numOfConfigs; i++)
-                    {
-                        std::string input = configurations[i];
-                        input.append("=");
-                        textImageFileOF << input;
-                    }
-                    textImageFileIF.close();
-                }
+                textImageFileIF.close();
             }
         }
     }
@@ -165,30 +162,33 @@ void WallpaperChanger::GetImages(const std::string& _dir, std::vector<std::strin
     for (const auto& entry : std::filesystem::directory_iterator(_dir))
     {
         std::string currentItemDir = ConvertWStrToStr(entry.path().c_str());
-
-        std::string nameOfItemWithDate;
-        std::reverse(currentItemDir.begin(), currentItemDir.end());
-        for (unsigned int i = 0; i < currentItemDir.length(); i++)
+        if (currentItemDir.find(".jpg") != std::string::npos || currentItemDir.find(".png") != std::string::npos)
         {
-            if (currentItemDir[i] == '/') {
-                break;
+            std::string nameOfItemWithDate;
+            std::reverse(currentItemDir.begin(), currentItemDir.end());
+            for (unsigned int i = 0; i < currentItemDir.length(); i++)
+            {
+                if (currentItemDir[i] == '/') {
+                    break;
+                }
+                nameOfItemWithDate.push_back(currentItemDir[i]);
+
             }
-            nameOfItemWithDate.push_back(currentItemDir[i]);
 
-        }
+            std::string nameOfImage;
+            for (unsigned int i = 0; i < nameOfItemWithDate.length(); i++)
+            {
+                if (currentItemDir[i] == '\\') {
+                    break;
+                }
+                nameOfImage.push_back(nameOfItemWithDate[i]);
 
-        std::string nameOfImage;
-        for (unsigned int i = 0; i < nameOfItemWithDate.length(); i++)
-        {
-            if (currentItemDir[i] == '\\') {
-                break;
             }
-            nameOfImage.push_back(nameOfItemWithDate[i]);
 
+            std::reverse(nameOfImage.begin(), nameOfImage.end());
+            _vector.emplace_back(nameOfImage);
         }
-
-        std::reverse(nameOfImage.begin(), nameOfImage.end());
-        _vector.emplace_back(nameOfImage);
+        
 
     }
 
@@ -200,7 +200,7 @@ void WallpaperChanger::GetImages(const std::string& _dir, std::vector<std::strin
 void WallpaperChanger::SetWallpaper(const std::vector<std::string>& _images)
 {
     int value = rand() % _images.size();
-    std::wstring completeDir = ConvertStrToWStr(currentDateDir + _images[value]);
+    std::wstring completeDir = ConvertStrToWStr(currentDateDir + "/" + _images[value]);
 
     auto imageSpecificDir = completeDir.c_str();
     if (!SystemParametersInfo(SPI_SETDESKWALLPAPER, 0, (void*)imageSpecificDir, SPIF_SENDCHANGE))
