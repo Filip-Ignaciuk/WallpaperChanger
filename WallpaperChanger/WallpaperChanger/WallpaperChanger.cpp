@@ -54,38 +54,30 @@ int WallpaperChanger::GetCurrentWeekDay()
 
 std::string WallpaperChanger::GetDocumentDir()
 {
+    std::string docPath;
     TCHAR path[MAX_PATH];
-    if (!FAILED(SHGetFolderPath(NULL, CSIDL_MYDOCUMENTS, NULL, SHGFP_TYPE_CURRENT, path))) {
-        return ConvertWStrToStr(path);
+    if (!FAILED(SHGetFolderPath(NULL, CSIDL_MYDOCUMENTS, NULL, SHGFP_TYPE_CURRENT, path))) 
+    {
+        docPath = ConvertWStrToStr(path);
+        return docPath;
     }
 
     std::cout << "Error with obtaining document directory." << std::endl;
     std::cin.get();
-    return "";
+    
+    return docPath;
 }
 
-const char* WallpaperChanger::daysLong[7] = { "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday" };
-const std::string WallpaperChanger::documentDir = GetDocumentDir();
-// In this case we can add / at the end of the directory as in all references of the variable it needs it.
-std::string WallpaperChanger::documentDirCopy = documentDir;
-const std::string WallpaperChanger::imageDir = NormaliseDir(documentDirCopy) + "/WallpaperChanger/Images/";
-const int WallpaperChanger::currentDay = GetCurrentWeekDay();
-const char* WallpaperChanger::configurations[numOfConfigs] = { "TimeLimit", "TimeActive", "TimeActivePriority" };
-
 // Initialising files if they haven't been created.
-void WallpaperChanger::initFiles()
+void WallpaperChanger::initFolders()
 {
-    std::string documentDirCopy = documentDir;
-    std::string imageDir = NormaliseDir(documentDirCopy) + "/WallpaperChanger";
 
-    if (std::filesystem::create_directory(imageDir) == 0)
+    if (std::filesystem::create_directory(documentDir + "/WallpaperChanger") == 0)
     {
         std::cout << "Error With initialising WallpaperChanger Directory" << std::endl;
         std::cin.get();
 
     }
-
-    imageDir = imageDir + "/Images";
 
     if (std::filesystem::create_directory(imageDir) == 0)
     {
@@ -109,13 +101,10 @@ void WallpaperChanger::initFiles()
 // Add text files to each image to customise how it is displayed.
 void WallpaperChanger::InitImages()
 {
-    
-
-    
     std::string imageDateDir;
     for (unsigned int i = 0; i < 7; i++)
     {
-        imageDateDir = imageDir + daysLong[i];
+        imageDateDir = imageDir + "/" + daysLong[i];
 
         for (const auto& entry : std::filesystem::directory_iterator(imageDateDir))
         {
@@ -171,35 +160,55 @@ bool WallpaperChanger::CheckIfImageTextFilesIsValid(std::ifstream& _file)
 }
 
 
-void WallpaperChanger::GetImages(const std::filesystem::directory_entry& _entry, std::vector<std::string>& _vector)
+void WallpaperChanger::GetImages(const std::string& _dir, std::vector<std::string>& _vector)
 {
-    std::string currentItemDir = ConvertWStrToStr(_entry.path().c_str());
-
-    std::string nameOfItemWithDate;
-    std::reverse(currentItemDir.begin(), currentItemDir.end());
-    for (unsigned int i = 0; i < currentItemDir.length(); i++)
+    for (const auto& entry : std::filesystem::directory_iterator(_dir))
     {
-        if (currentItemDir[i] == '/') {
-            break;
+        std::string currentItemDir = ConvertWStrToStr(entry.path().c_str());
+
+        std::string nameOfItemWithDate;
+        std::reverse(currentItemDir.begin(), currentItemDir.end());
+        for (unsigned int i = 0; i < currentItemDir.length(); i++)
+        {
+            if (currentItemDir[i] == '/') {
+                break;
+            }
+            nameOfItemWithDate.push_back(currentItemDir[i]);
+
         }
-        nameOfItemWithDate.push_back(currentItemDir[i]);
+
+        std::string nameOfImage;
+        for (unsigned int i = 0; i < nameOfItemWithDate.length(); i++)
+        {
+            if (currentItemDir[i] == '\\') {
+                break;
+            }
+            nameOfImage.push_back(nameOfItemWithDate[i]);
+
+        }
+
+        std::reverse(nameOfImage.begin(), nameOfImage.end());
+        _vector.emplace_back(nameOfImage);
 
     }
 
-    std::string nameOfImage;
-    for (unsigned int i = 0; i < nameOfItemWithDate.length(); i++)
-    {
-        if (currentItemDir[i] == '\\') {
-            break;
-        }
-        nameOfImage.push_back(nameOfItemWithDate[i]);
 
-    }
-
-    std::reverse(nameOfImage.begin(), nameOfImage.end());
-    _vector.emplace_back(nameOfImage);
+    
 }
 
+
+void WallpaperChanger::SetWallpaper(const std::vector<std::string>& _images)
+{
+    int value = rand() % _images.size();
+    std::wstring completeDir = ConvertStrToWStr(currentDateDir + _images[value]);
+
+    auto imageSpecificDir = completeDir.c_str();
+    if (!SystemParametersInfo(SPI_SETDESKWALLPAPER, 0, (void*)imageSpecificDir, SPIF_SENDCHANGE))
+    {
+        std::cout << "Error with setting wallpaper." << std::endl;
+        std::cin.get();
+    }
+}
 
 
 // To do
@@ -216,7 +225,7 @@ void WallpaperChanger::StartWallpaperChanger()
     file.open(documentDir + "/WallpaperChanger/Initialised.txt");
     if (!file.is_open())
     {
-        initFiles();
+        initFolders();
         std::cout << "Initialising..." << std::endl;
         std::cout << "Restart application after adding images to the generated subfolders." << std::endl;
         std::cout << "The subfolders are located within your documents folder." << std::endl;
@@ -228,6 +237,8 @@ void WallpaperChanger::StartWallpaperChanger()
         return;
     }
 
+    
+    InitImages();
 
 
     // Accessing registry so that we know what the current wallpaper is.
@@ -270,64 +281,16 @@ void WallpaperChanger::StartWallpaperChanger()
         nameOfCurrentImage.push_back(dirOfCurrentImage[j]);
     }
 
-
-    std::string imageDirDay;
-    std::wstring dateDirW;
-
-
-    std::vector<std::string> images;
-    std::wstring imageDirW = ConvertStrToWStr(imageDir);
-
+    std::vector<std::string> imagesOfCurrentDay;
     bool isCorrect = false;
 
-    if (currentDay == 1)
-    {
-        imageDirDay = imageDir + daysLong[0];
-        dateDirW = ConvertStrToWStr("Monday/");
+    GetImages(currentDateDir, imagesOfCurrentDay);
 
-    }
-    else if (currentDay == 2)
-    {
-        imageDirDay = imageDir + daysLong[1];
-        dateDirW = ConvertStrToWStr("Tuesday/");
+    
 
-    }
-    else if (currentDay == 3)
+    for (unsigned int i = 0; i < imagesOfCurrentDay.size(); i++)
     {
-        imageDirDay = imageDir + daysLong[2];
-        dateDirW = ConvertStrToWStr("Wednesday/");
-    }
-    else if (currentDay == 4)
-    {
-        imageDirDay = imageDir + daysLong[3];
-        dateDirW = ConvertStrToWStr("Thursday/");
-    }
-    else if (currentDay == 5)
-    {
-        imageDirDay = imageDir + daysLong[4];
-        dateDirW = ConvertStrToWStr("Friday/");
-    }
-    else if (currentDay == 6)
-    {
-        imageDirDay = imageDir + daysLong[5];
-        dateDirW = ConvertStrToWStr("Saturday/");
-    }
-    else if (currentDay == 7)
-    {
-        imageDirDay = imageDir + daysLong[6];
-        dateDirW = ConvertStrToWStr("Sunday/");
-    }
-
-    for (const auto& entry : std::filesystem::directory_iterator(imageDirDay))
-    {
-        GetImages(entry, images);
-    }
-
-    InitImages();
-
-    for (unsigned int i = 0; i < images.size(); i++)
-    {
-        if (images[i] == nameOfCurrentImage)
+        if (imagesOfCurrentDay[i] == nameOfCurrentImage)
         {
             isCorrect = true;
         }
@@ -337,17 +300,9 @@ void WallpaperChanger::StartWallpaperChanger()
     {
         std::cout << "Current Wallpaper is valid." << std::endl;
     }
-    else if (!images.empty())
+    else if (!imagesOfCurrentDay.empty())
     {
-        int value = rand() % images.size();
-        std::wstring completeDir = imageDirW + dateDirW + ConvertStrToWStr(images[value]);
-
-        auto imageSpecificDir = completeDir.c_str();
-        if (!SystemParametersInfo(SPI_SETDESKWALLPAPER, 0, (void*)imageSpecificDir, SPIF_SENDCHANGE))
-        {
-            std::cout << "Error with setting wallpaper." << std::endl;
-            std::cin.get();
-        }
+        SetWallpaper(imagesOfCurrentDay);
     }
     else
     {
@@ -355,7 +310,6 @@ void WallpaperChanger::StartWallpaperChanger()
         std::cout << "Go to your images folder located within your documents folder. Then place images to the dates you would like." << std::endl;
         std::cin.get();
     }
-    return;
 
 }
 
@@ -364,3 +318,5 @@ int main()
 {
     WallpaperChanger::StartWallpaperChanger();
 }
+
+

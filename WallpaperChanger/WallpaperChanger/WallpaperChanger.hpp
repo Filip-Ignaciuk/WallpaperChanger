@@ -24,22 +24,27 @@ private:
 
     static std::string GetDocumentDir();
 
-    static const char* daysLong[7];
-    static const std::string documentDir;
-	static std::string documentDirCopy;
-    static const std::string imageDir;
-    static const int currentDay;
+    inline static const char* daysLong[7] = { "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday" };
+    inline static const std::wstring daysLongW[7] = { ConvertStrToWStr("Monday"), ConvertStrToWStr("Tuesday") , ConvertStrToWStr("Wednesday") , ConvertStrToWStr("Thursday") , ConvertStrToWStr("Friday") , ConvertStrToWStr("Saturday") , ConvertStrToWStr("Sunday") };;
+    inline static const std::string documentDir = GetDocumentDir();
+    // Need to fix this, gives out bad alloc errors without copy.
+    inline static  std::string documentDirCopy = documentDir;
+    inline static const std::string imageDir = NormaliseDir(documentDirCopy) + "/WallpaperChanger/Images";;
+    inline static int currentDay = GetCurrentWeekDay();
+    inline static std::string currentDateDir = imageDir + "/" + daysLong[currentDay - 1];
     static constexpr int numOfConfigs = 3;
-    static const char* configurations[numOfConfigs];
+    inline static const char* configurations[numOfConfigs] = { "TimeLimit", "TimeActive", "TimeActivePriority" };;
 
     // Initialising files if they haven't been created.
-    static void initFiles();
+    static void initFolders();
 
     static void InitImages();
 
     static bool CheckIfImageTextFilesIsValid(std::ifstream& _file);
 
-    static void GetImages(const std::filesystem::directory_entry& _entry, std::vector<std::string>& _vector);
+    static void GetImages(const std::string& _entry, std::vector<std::string>& _vector);
+
+    static void SetWallpaper(const std::vector<std::string>& _images);
 
     static void SetColorAccent();
 
