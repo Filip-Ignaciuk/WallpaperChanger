@@ -32,7 +32,11 @@ private:
     inline static const std::string imageDir = NormaliseDir(documentDirCopy) + "/WallpaperChanger/Images";;
     inline static int currentDay = GetCurrentWeekDay();
     inline static std::string currentDateDir = imageDir + "/" + daysLong[currentDay - 1];
+
+public:
     static constexpr int numOfConfigs = 3;
+private:
+
     inline static const char* configurations[numOfConfigs] = { "TimeLimit", "TimeActive", "TimeActivePriority" };;
 
     // Initialising files if they haven't been created.
@@ -48,9 +52,15 @@ private:
 
     static void SetColorAccent();
 
+    static bool IsDigit(const char* _num);
+
 public:
+
+
+
     static void StartWallpaperChanger();
 
-    static void SetImageConfiguration(const std::string& _fileName, const std::string& _config, const std::string& _data, const int _dayOfImage);
+    static void SetImageConfiguration(const std::string& _fileName, const int _dayOfImage, const std::string& _config, const std::string& _data);
 
+    static void GetImageConfiguration(const std::string& _fileName, const int _dayOfImage, int* configs[numOfConfigs]);
 };

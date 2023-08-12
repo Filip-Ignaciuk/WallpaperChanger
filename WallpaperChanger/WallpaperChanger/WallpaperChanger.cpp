@@ -218,6 +218,16 @@ void WallpaperChanger::SetColorAccent()
 }
 
 
+bool WallpaperChanger::IsDigit(const char* _num)
+{
+	if (_num == "0" || _num == "1" || _num == "2" || _num == "3" || _num == "4" || _num == "5" || _num == "6" || _num == "7" || _num == "8" || _num == "9")
+	{
+        return true;
+	}
+    return false;
+}
+
+
 void WallpaperChanger::StartWallpaperChanger()
 {
     // Checking/Initialising files
@@ -313,37 +323,81 @@ void WallpaperChanger::StartWallpaperChanger()
 
 }
 
-void WallpaperChanger::SetImageConfiguration(const std::string& _fileName, const std::string& _config, const std::string& _data, const int _dayOfImage)
+void WallpaperChanger::SetImageConfiguration(const std::string& _fileName, const int _dayOfImage, const std::string& _config, const std::string& _data)
 {
     std::string documentDirCopy = documentDir;
-    std::string file = NormaliseDir(documentDirCopy) + "/WallpaperChanger/Images/" + daysLong[_dayOfImage] + "/" + _fileName;
-    std::ifstream fileR(file);
+    std::string fileDir = NormaliseDir(documentDirCopy) + "/WallpaperChanger/Images/" + daysLong[_dayOfImage] + "/" + _fileName;
+    std::ifstream fileR(fileDir);
     
     std::string line;
     int pos;
     if(fileR.is_open())
     {
-        while (std::getline(fileR, line))
+        std::getline(fileR, line);
+        // Get position of data equal to the config.
+        pos = line.find_first_of(_config) + _config.size() + 1;
+        fileR.close();
+        line.insert(pos, _data);
+        std::ofstream fileW(fileDir, std::ofstream::trunc);
+        if(fileW.is_open())
         {
-            // Get line of data equal to the config.
-            pos = line.find_first_of(_config) + _config.size() + 1;
+            fileW << line;
+
+            fileW.close();
+        }
+        else
+        {
+            std::cout << "Failed writing new data into image config file." << std::endl;
+        }
+        
+    }
+    else
+    {
+        std::cout << "Reading image config file failed." << std::endl;
+    }
+    
+
+    
+
+    
+}
+
+void WallpaperChanger::GetImageConfiguration(const std::string& _fileName,const int _dayOfImage, int* configs[3])
+{
+    std::string documentDirCopy = documentDir;
+    std::string fileDir = NormaliseDir(documentDirCopy) + "/WallpaperChanger/Images/" + daysLong[_dayOfImage] + "/" + _fileName;
+    std::ifstream fileR(fileDir);
+    std::string line;
+    if(fileR.is_open())
+    {
+        std::getline(fileR, line);
+        for (size_t i = 0; i < numOfConfigs; i++)
+        {
+            std::string config = configurations[i];
+            std::string currentConfigData;
+        	int pos = line.find_first_of(config) + config.size() + 1;
+            while(isdigit(line[pos]))
+            {
+                currentConfigData.insert(currentConfigData.size(), 1, line[pos]);
+                pos++;
+            }
+            int num = std::stoi(currentConfigData);
+            configs[i] = &num;
         }
     }
-    fileR.close();
-
-    line.insert(pos, _data);
-
-    std::ofstream fileW(file, std::ofstream::trunc);
-    fileW << line;
-    
-    fileW.close();
+    else
+    {
+        std::cout << "Reading image config file failed." << std::endl;
+    }
 }
+
 
 int main()
 {
+    int* configs[WallpaperChanger::numOfConfigs];
     WallpaperChanger::StartWallpaperChanger();
-    WallpaperChanger::SetImageConfiguration("Halflife2Town.txt", "TimeLimit", "0", 0);
-
+    //WallpaperChanger::SetImageConfiguration("Halflife2Town.txt", 0, "TimeLimit", "0");
+    WallpaperChanger::GetImageConfiguration("Halflife2Town.txt", 0, configs);
 }
 
 
