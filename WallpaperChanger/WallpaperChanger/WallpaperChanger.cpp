@@ -313,10 +313,15 @@ void WallpaperChanger::StartWallpaperChanger()
 
 }
 
+void WallpaperChanger::SetImageConfiguration(const std::string& _fileName)
+{
+    std::ifstream file(_fileName);
+}
 
 int main()
 {
     WallpaperChanger::StartWallpaperChanger();
+
 }
 
 
