@@ -375,6 +375,7 @@ void WallpaperChanger::GetImageConfiguration(const std::string& _fileName,const 
         {
             std::string config = configurations[i];
             std::string currentConfigData;
+            // find first of not working as intended
         	int pos = line.find_first_of(config) + config.size() + 1;
             while(isdigit(line[pos]))
             {
