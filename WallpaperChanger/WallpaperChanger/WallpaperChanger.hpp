@@ -51,6 +51,6 @@ private:
 public:
     static void StartWallpaperChanger();
 
-    static void SetImageConfiguration(const std::string& _fileName);
+    static void SetImageConfiguration(const std::string& _fileName, const std::string& _config, const std::string& _data, const int _dayOfImage);
 
 };

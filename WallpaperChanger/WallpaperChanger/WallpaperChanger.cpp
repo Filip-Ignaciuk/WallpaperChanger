@@ -313,14 +313,36 @@ void WallpaperChanger::StartWallpaperChanger()
 
 }
 
-void WallpaperChanger::SetImageConfiguration(const std::string& _fileName)
+void WallpaperChanger::SetImageConfiguration(const std::string& _fileName, const std::string& _config, const std::string& _data, const int _dayOfImage)
 {
-    std::ifstream file(_fileName);
+    std::string documentDirCopy = documentDir;
+    std::string file = NormaliseDir(documentDirCopy) + "/WallpaperChanger/Images/" + daysLong[_dayOfImage] + "/" + _fileName;
+    std::ifstream fileR(file);
+    
+    std::string line;
+    int pos;
+    if(fileR.is_open())
+    {
+        while (std::getline(fileR, line))
+        {
+            // Get line of data equal to the config.
+            pos = line.find_first_of(_config) + _config.size() + 1;
+        }
+    }
+    fileR.close();
+
+    line.insert(pos, _data);
+
+    std::ofstream fileW(file, std::ofstream::trunc);
+    fileW << line;
+    
+    fileW.close();
 }
 
 int main()
 {
     WallpaperChanger::StartWallpaperChanger();
+    WallpaperChanger::SetImageConfiguration("Halflife2Town.txt", "TimeLimit", "0", 0);
 
 }
 
