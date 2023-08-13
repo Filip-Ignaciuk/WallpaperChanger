@@ -46,6 +46,7 @@ int WallpaperChanger::GetCurrentWeekDay()
     time(&rawTime);
     const tm* timeInfo = localtime(&rawTime);
 
+    // Gives week day starting at sunday as 0.
     const int wDay = timeInfo->tm_wday;
 
     return wDay;
@@ -323,6 +324,7 @@ void WallpaperChanger::StartWallpaperChanger()
 
 }
 
+
 void WallpaperChanger::SetImageConfiguration(const std::string& _fileName, const int _dayOfImage, const std::string& _config, const std::string& _data)
 {
     std::string documentDirCopy = documentDir;
@@ -362,7 +364,7 @@ void WallpaperChanger::SetImageConfiguration(const std::string& _fileName, const
     
 }
 
-void WallpaperChanger::GetImageConfiguration(const std::string& _fileName,const int _dayOfImage, int* configs[3])
+void WallpaperChanger::GetImageConfiguration(const std::string& _fileName,const int _dayOfImage, int _configs[3])
 {
     std::string documentDirCopy = documentDir;
     std::string fileDir = NormaliseDir(documentDirCopy) + "/WallpaperChanger/Images/" + daysLong[_dayOfImage] + "/" + _fileName;
@@ -375,30 +377,36 @@ void WallpaperChanger::GetImageConfiguration(const std::string& _fileName,const 
         {
             std::string config = configurations[i];
             std::string currentConfigData;
-            // find first of not working as intended
-        	int pos = line.find_first_of(config) + config.size() + 1;
+        	int pos = line.find(config) + config.size() + 1;
             while(isdigit(line[pos]))
             {
                 currentConfigData.insert(currentConfigData.size(), 1, line[pos]);
                 pos++;
             }
-            int num = std::stoi(currentConfigData);
-            configs[i] = &num;
+            int num = 0;
+
+            if (!currentConfigData.empty())
+            {
+            	num = std::stoi(currentConfigData);
+            }
+            _configs[i] = num;
         }
     }
     else
     {
-        std::cout << "Reading image config file failed." << std::endl;
+        std::cout << "Writing to image config file failed." << std::endl;
     }
 }
 
 
+
 int main()
 {
-    int* configs[WallpaperChanger::numOfConfigs];
+    int configs[WallpaperChanger::numOfConfigs] = {};
     WallpaperChanger::StartWallpaperChanger();
-    //WallpaperChanger::SetImageConfiguration("Halflife2Town.txt", 0, "TimeLimit", "0");
-    WallpaperChanger::GetImageConfiguration("Halflife2Town.txt", 0, configs);
+    WallpaperChanger::SetImageConfiguration("Example.txt", 1, "TimeLimit", "0");
+    WallpaperChanger::GetImageConfiguration("Example.txt", 1, configs);
+
 }
 
 

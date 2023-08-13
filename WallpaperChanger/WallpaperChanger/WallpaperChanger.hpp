@@ -24,14 +24,14 @@ private:
 
     static std::string GetDocumentDir();
 
-    inline static const char* daysLong[7] = { "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday" };
-    inline static const std::wstring daysLongW[7] = { ConvertStrToWStr("Monday"), ConvertStrToWStr("Tuesday") , ConvertStrToWStr("Wednesday") , ConvertStrToWStr("Thursday") , ConvertStrToWStr("Friday") , ConvertStrToWStr("Saturday") , ConvertStrToWStr("Sunday") };;
+    inline static const char* daysLong[7] = { "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday" };
+    inline static const std::wstring daysLongW[7] = { ConvertStrToWStr("Monday"),  ConvertStrToWStr("Sunday"), ConvertStrToWStr("Tuesday") , ConvertStrToWStr("Wednesday") , ConvertStrToWStr("Thursday") , ConvertStrToWStr("Friday") , ConvertStrToWStr("Saturday") };
     inline static const std::string documentDir = GetDocumentDir();
     // Need to fix this, gives out bad alloc errors without copy.
     inline static  std::string documentDirCopy = documentDir;
     inline static const std::string imageDir = NormaliseDir(documentDirCopy) + "/WallpaperChanger/Images";;
     inline static int currentDay = GetCurrentWeekDay();
-    inline static std::string currentDateDir = imageDir + "/" + daysLong[currentDay - 1];
+    inline static std::string currentDateDir = imageDir + "/" + daysLong[currentDay];
 
 public:
     static constexpr int numOfConfigs = 3;
@@ -60,7 +60,9 @@ public:
 
     static void StartWallpaperChanger();
 
+    static void EndWallpaperChanger();
+
     static void SetImageConfiguration(const std::string& _fileName, const int _dayOfImage, const std::string& _config, const std::string& _data);
 
-    static void GetImageConfiguration(const std::string& _fileName, const int _dayOfImage, int* configs[numOfConfigs]);
+    static void GetImageConfiguration(const std::string& _fileName, const int _dayOfImage, int _configs[numOfConfigs]);
 };
