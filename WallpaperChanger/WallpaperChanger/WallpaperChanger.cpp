@@ -121,11 +121,81 @@ void WallpaperChanger::InitImages()
 
             std::ifstream textImageFileIF;
             textImageFileIF.open(textImageFileDir);
+            bool isOpen = textImageFileIF.is_open();
+            bool isValid = CheckIfImageTextFilesIsValid(textImageFileIF);
+            // We need to check if its open as we are dependent on that later on within the code.
+            if (isOpen && !isValid)
+            {
+                
+                std::cout << "Found broken text configuration files, would you like to override them into clean new text files, or try to fix them?" << std::endl;
+                std::cout << "Input o for override or f for fix." << std::endl;
+                std::string option;
+                std::cin >> option;
+                std::transform(option.begin(), option.end(), option.begin(), ::tolower);
+                if(option == "o")
+                {
+                    textImageFileIF.close();
+                    std::ofstream textImageFileOF;
+                    textImageFileOF.open(textImageFileDir, std::ofstream::out | std::ofstream::trunc);
 
-            if (!textImageFileIF.is_open() || !CheckIfImageTextFilesIsValid(textImageFileIF))
+                    for (size_t i = 0; i < numOfConfigs; i++)
+                    {
+                        std::string input = configurations[i];
+                        input.append("=");
+                        textImageFileOF << input;
+                    }
+                    textImageFileOF.close();
+                }
+                else
+                {
+                    const std::string equalSign = "=";
+                    std::string line;
+                    std::string newLine;
+                    std::string currentConfig;
+                    // Fix: doesn't overwrite the line variable.
+                    std::getline(textImageFileIF, line);
+                    textImageFileIF.close();
+
+
+                    for (size_t i = 0; i < numOfConfigs; i++)
+                    {
+                        currentConfig = configurations[i];
+                        if(line.find(currentConfig) != std::string::npos)
+                        {
+                            
+                            newLine.append(currentConfig + equalSign);
+                        }
+                        else
+                        {
+                            
+                            int pos = line.find(currentConfig) + currentConfig.size() + 1;
+                            std::string currentConfigData;
+
+                            while (isdigit(line[pos]))
+                            {
+                                currentConfigData.insert(currentConfigData.size(), 1, line[pos]);
+                                pos++;
+                            }
+                            newLine.append(currentConfig + equalSign + currentConfigData);
+
+                        }
+                        
+                    }
+
+                    std::ofstream textImageFileOF;
+                    textImageFileOF.open(textImageFileDir, std::ofstream::trunc);
+                    textImageFileOF << newLine;
+                    textImageFileOF.close();
+
+                }
+            }
+            else if (isValid)
+            {
+                continue;
+            }
+            else
             {
                 textImageFileIF.close();
-
                 std::ofstream textImageFileOF;
                 textImageFileOF.open(textImageFileDir, std::ofstream::out | std::ofstream::trunc);
 
@@ -135,7 +205,7 @@ void WallpaperChanger::InitImages()
                     input.append("=");
                     textImageFileOF << input;
                 }
-                textImageFileIF.close();
+                textImageFileOF.close();
             }
         }
     }
@@ -337,7 +407,7 @@ void WallpaperChanger::SetImageConfiguration(const std::string& _fileName, const
     {
         std::getline(fileR, line);
         // Get position of data equal to the config.
-        pos = line.find_first_of(_config) + _config.size() + 1;
+        pos = line.find(_config) + _config.size() + 1;
         fileR.close();
         line.insert(pos, _data);
         std::ofstream fileW(fileDir, std::ofstream::trunc);
