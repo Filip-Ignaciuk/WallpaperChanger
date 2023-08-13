@@ -100,7 +100,7 @@ void WallpaperChanger::initFolders()
 }
 
 // Add text files to each image to customise how it is displayed.
-void WallpaperChanger::InitImages()
+void WallpaperChanger::InitImages(const int _repairType)
 {
     std::string imageDateDir;
     for (unsigned int i = 0; i < 7; i++)
@@ -129,7 +129,7 @@ void WallpaperChanger::InitImages()
             // We need to check if its open as we are dependent on that later on within the code.
             if (isOpen && !isValid)
             {
-                if(false)
+                if(_repairType)
                 {
                     textImageFileIF.close();
                     std::ofstream textImageFileOF;
@@ -325,7 +325,7 @@ void WallpaperChanger::StartWallpaperChanger()
     }
 
     
-    InitImages();
+    InitImages(1);
 
 
     // Accessing registry so that we know what the current wallpaper is.

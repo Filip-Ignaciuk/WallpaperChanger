@@ -42,7 +42,7 @@ private:
     // Initialising files if they haven't been created.
     static void initFolders();
 
-    static void InitImages();
+    static void InitImages(const int _repairType);
 
     static bool CheckIfImageTextFilesIsValid(std::ifstream& _file);
 
