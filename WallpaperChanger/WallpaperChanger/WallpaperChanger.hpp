@@ -46,6 +46,8 @@ private:
 
     static bool CheckIfImageTextFilesIsValid(std::ifstream& _file);
 
+    static bool CheckIfImageTextFilesIsValid(std::string& _line);
+
     static void GetImages(const std::string& _entry, std::vector<std::string>& _vector);
 
     static void SetWallpaper(const std::vector<std::string>& _images);

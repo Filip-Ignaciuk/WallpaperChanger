@@ -121,23 +121,20 @@ void WallpaperChanger::InitImages()
 
             std::ifstream textImageFileIF;
             textImageFileIF.open(textImageFileDir);
+            std::string line;
+            // std::getline doesn't like being called multiple times on one file. We need to create a "master" line for all to view.
+            std::getline(textImageFileIF, line);
             bool isOpen = textImageFileIF.is_open();
-            bool isValid = CheckIfImageTextFilesIsValid(textImageFileIF);
+            bool isValid = CheckIfImageTextFilesIsValid(line);
             // We need to check if its open as we are dependent on that later on within the code.
             if (isOpen && !isValid)
             {
-                
-                std::cout << "Found broken text configuration files, would you like to override them into clean new text files, or try to fix them?" << std::endl;
-                std::cout << "Input o for override or f for fix." << std::endl;
-                std::string option;
-                std::cin >> option;
-                std::transform(option.begin(), option.end(), option.begin(), ::tolower);
-                if(option == "o")
+                if(false)
                 {
                     textImageFileIF.close();
                     std::ofstream textImageFileOF;
                     textImageFileOF.open(textImageFileDir, std::ofstream::out | std::ofstream::trunc);
-
+            
                     for (size_t i = 0; i < numOfConfigs; i++)
                     {
                         std::string input = configurations[i];
@@ -149,18 +146,15 @@ void WallpaperChanger::InitImages()
                 else
                 {
                     const std::string equalSign = "=";
-                    std::string line;
                     std::string newLine;
                     std::string currentConfig;
-                    // Fix: doesn't overwrite the line variable.
-                    std::getline(textImageFileIF, line);
                     textImageFileIF.close();
-
-
+            
+            
                     for (size_t i = 0; i < numOfConfigs; i++)
                     {
                         currentConfig = configurations[i];
-                        if(line.find(currentConfig) != std::string::npos)
+                        if(line.find(currentConfig) == std::string::npos)
                         {
                             
                             newLine.append(currentConfig + equalSign);
@@ -170,23 +164,23 @@ void WallpaperChanger::InitImages()
                             
                             int pos = line.find(currentConfig) + currentConfig.size() + 1;
                             std::string currentConfigData;
-
+            
                             while (isdigit(line[pos]))
                             {
                                 currentConfigData.insert(currentConfigData.size(), 1, line[pos]);
                                 pos++;
                             }
                             newLine.append(currentConfig + equalSign + currentConfigData);
-
+            
                         }
                         
                     }
-
+            
                     std::ofstream textImageFileOF;
                     textImageFileOF.open(textImageFileDir, std::ofstream::trunc);
                     textImageFileOF << newLine;
                     textImageFileOF.close();
-
+            
                 }
             }
             else if (isValid)
@@ -198,7 +192,7 @@ void WallpaperChanger::InitImages()
                 textImageFileIF.close();
                 std::ofstream textImageFileOF;
                 textImageFileOF.open(textImageFileDir, std::ofstream::out | std::ofstream::trunc);
-
+            
                 for (size_t i = 0; i < numOfConfigs; i++)
                 {
                     std::string input = configurations[i];
@@ -213,17 +207,29 @@ void WallpaperChanger::InitImages()
 
 bool WallpaperChanger::CheckIfImageTextFilesIsValid(std::ifstream& _file)
 {
-    int configIncrement = 0;
     std::string config;
+    std::getline(_file, config);
     // Checking if each line is concordant with the configurations array.
-	while(std::getline(_file, config))
-	{
-        if(config.find(configurations[configIncrement]) == std::string::npos)
+    for (size_t i = 0; i < numOfConfigs; i++)
+    {
+        if (config.find(configurations[i]) == std::string::npos)
         {
             return false;
         }
-        configIncrement++;
-	}
+    }
+    return true;
+}
+
+bool WallpaperChanger::CheckIfImageTextFilesIsValid(std::string& _line)
+{
+    // Checking if each line is concordant with the configurations array.
+    for (size_t i = 0; i < numOfConfigs; i++)
+    {
+        if (_line.find(configurations[i]) == std::string::npos)
+        {
+            return false;
+        }
+    }
     return true;
 }
 
